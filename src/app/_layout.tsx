@@ -1,6 +1,91 @@
+import { Ionicons } from "@expo/vector-icons";
 import "../global.css";
-import { Slot } from "expo-router";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Link, Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { TouchableOpacity } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-export default function Layout() {
-  return <Slot />;
+export {
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary,
+} from "expo-router";
+
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "(tabs)",
+};
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
+export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
+    ...FontAwesome.font,
+  });
+
+  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
+  return <RootLayoutNav />;
+}
+function RootLayoutNav() {
+  return (
+    <Providers>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="hearingTest"
+          options={{
+            headerShown: false,
+            presentation: "fullScreenModal",
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/settings"
+          options={{
+            title: "Settings",
+            headerLeft: () => (
+              <TouchableOpacity>
+                <Link href="/profile">
+                  <Ionicons name="chevron-back-outline" size={30} />
+                </Link>
+              </TouchableOpacity>
+            ),
+          }}
+        />
+      </Stack>
+    </Providers>
+  );
+}
+
+function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={DefaultTheme}>
+        <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
+  );
 }
