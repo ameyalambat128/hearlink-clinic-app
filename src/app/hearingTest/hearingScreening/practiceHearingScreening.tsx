@@ -373,9 +373,9 @@ export default function Screen() {
             <Ionicons name="arrow-down-outline" size={50} color="black" />
           </View>
         ) : (
-          <View className="space-y-8">
+          <View className="">
             <TouchableOpacity
-              className="items-center justify-center rounded-full bg-blue-200 p-4"
+              className="items-center justify-center rounded-full bg-blue-200 p-4 mb-8"
               onPress={handleYesPress}
             >
               <Text className="text-base font-medium text-blue-800">Yes</Text>

@@ -364,9 +364,9 @@ export default function Screen() {
             <Text className="text-lg text-white">Play</Text>
           </TouchableOpacity>
         </View> */}
-        <View className="space-y-8">
+        <View className="">
           <TouchableOpacity
-            className="items-center justify-center rounded-full bg-blue-200 p-4"
+            className="items-center justify-center rounded-full bg-blue-200 p-4 mb-8"
             onPress={handleYesPress}
           >
             <Text className="text-base font-medium text-blue-800">Yes</Text>
