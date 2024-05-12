@@ -3,82 +3,16 @@ import { Audio } from "expo-av";
 import { Stack, useNavigation, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  Button,
-  Image,
   SafeAreaView,
-  StyleSheet,
   TouchableOpacity,
   View,
   useColorScheme,
   Text,
 } from "react-native";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
 
 import { SetUpButton } from "@/components/ui/Button";
+import AudioMeter from "@/components/AudioMeter";
 import Colors from "@/constants/Colors";
-
-const AudioMeter = ({ dbValue }: { dbValue: number }) => {
-  const meterLevel = useSharedValue(0);
-  const [smoothedDbValue, setSmoothedDbValue] = useState(dbValue);
-  const smoothingFactor = 0.2; // Adjust this to control smoothing (0 to 1)
-  const updateInterval = 30; // How often to update the smoothed value in milliseconds
-
-  const normalizeMetering = (db: number) => {
-    const minDb = -60;
-    const maxDb = 0;
-    return db < minDb ? 0 : db > maxDb ? 1 : (db - minDb) / (maxDb - minDb);
-  };
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      // Apply simple exponential smoothing
-      setSmoothedDbValue(
-        (prevSmoothedDb) =>
-          prevSmoothedDb + smoothingFactor * (dbValue - prevSmoothedDb)
-      );
-    }, updateInterval);
-
-    return () => clearInterval(intervalId);
-  }, [dbValue]);
-
-  useEffect(() => {
-    meterLevel.value = withTiming(normalizeMetering(smoothedDbValue), {
-      duration: updateInterval,
-    });
-  }, [smoothedDbValue]);
-
-  const animatedStyles = useAnimatedStyle(() => {
-    return {
-      width: `${meterLevel.value * 100}%`,
-    };
-  });
-
-  return (
-    <View style={styles.meterContainer}>
-      <Animated.View style={[styles.meterFill, animatedStyles]} />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  meterContainer: {
-    width: "100%",
-    height: 20,
-    backgroundColor: "lightgray",
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  meterFill: {
-    height: "100%",
-    backgroundColor: "green",
-    borderRadius: 10,
-  },
-});
 
 export default function Screen() {
   const router = useRouter();
