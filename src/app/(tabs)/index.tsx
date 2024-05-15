@@ -147,7 +147,7 @@ export default function Hearing() {
                 }}
               >
                 <Pressable
-                  className="items-center space-y-4"
+                  className="items-center"
                   onPress={() => nextPage(item.link)}
                 >
                   <Image
@@ -159,7 +159,7 @@ export default function Hearing() {
                       borderRadius: 24,
                     }}
                   />
-                  <Text className="text-xl font-bold">{item.name}</Text>
+                  <Text className="text-xl font-bold my-6">{item.name}</Text>
                   <Text className="text-center font-medium text-gray-700">
                     {item.description}
                   </Text>

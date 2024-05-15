@@ -28,8 +28,9 @@ export default function Screen() {
             source={require("../../../../assets/media/doNotDisturb.gif")} // Replace with your volume icon
             resizeMode="contain"
             style={{
-              width: 300,
-              height: 430,
+              height: 500,
+              width: "100%",
+              borderRadius: 10,
             }}
           />
         </View>

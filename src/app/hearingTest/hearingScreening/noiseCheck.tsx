@@ -78,7 +78,7 @@ export default function Screen() {
 
   const handleNext = async () => {
     await stopRecording();
-    router.push("/hearingTest/hearingScreening/connectHeadphones");
+    router.push("/hearingTest/hearingScreening/chooseHeadphones");
   };
 
   useEffect(() => {
@@ -93,8 +93,8 @@ export default function Screen() {
           headerLeft: () => <View />,
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => {
-                stopRecording();
+              onPress={async () => {
+                if (recordingRef.current) await stopRecording();
                 navigation.dispatch({ type: "POP_TO_TOP" });
                 navigation.dispatch({ type: "POP_TO_TOP" });
               }}

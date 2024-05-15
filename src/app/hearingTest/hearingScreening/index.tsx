@@ -22,17 +22,18 @@ export default function Screen() {
             different pitches.
           </Text>
         </View>
-        <View className="items-center">
-          <Image
-            source={require("../../../../assets/images/hearingscreen-logo.png")}
-            style={{
-              width: 300,
-              height: 250,
-              resizeMode: "contain",
-              borderRadius: 24,
-            }}
-          />
-        </View>
+        {/* <View className="items-center"> */}
+        <Image
+          source={require("../../../../assets/images/hearingscreen-logo.png")}
+          style={{
+            width: "100%",
+            height: undefined,
+            aspectRatio: 1,
+            resizeMode: "contain",
+            borderRadius: 24,
+          }}
+        />
+        {/* </View> */}
         <View className="mb-4 flex items-center">
           <SetUpButton title="Next" handlePress={handleNext} />
         </View>

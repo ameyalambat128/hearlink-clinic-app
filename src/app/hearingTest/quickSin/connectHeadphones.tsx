@@ -23,13 +23,13 @@ export default function ConnectHeadphones() {
             Remember to turn on noise cancellation
           </Text>
         </View>
-        <View className="shadow-2xl">
+        <View className="items-center">
           <Image
             source={require("../../../../assets/media/noiseCancellation.gif")} // Replace with your volume icon
-            resizeMode="contain"
             style={{
-              width: 300,
-              height: 450,
+              height: 500,
+              width: "100%",
+              borderRadius: 10,
             }}
           />
         </View>

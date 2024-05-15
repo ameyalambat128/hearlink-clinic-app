@@ -26,8 +26,9 @@ export default function QuickSin() {
           <Image
             source={require("../../../../assets/images/quicksin-logo.png")}
             style={{
-              width: 300,
-              height: 250,
+              width: "100%",
+              height: undefined,
+              aspectRatio: 1,
               resizeMode: "contain",
               borderRadius: 24,
             }}
