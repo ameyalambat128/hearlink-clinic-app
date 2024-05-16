@@ -3,6 +3,7 @@ import { AVPlaybackStatus, Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, SafeAreaView, TouchableOpacity, View } from "react-native";
+import Voice from "@react-native-voice/voice";
 
 import ExternalLink from "@/components/ExternalLink";
 import { SetUpButton } from "@/components/ui/Button";
@@ -17,6 +18,8 @@ export default function Screen() {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [result, setResult] = useState<Record<string, number>>({});
   const [score, setScore] = useState<number | null>(null);
+  const [started, setStarted] = useState(false);
+  const [results, setResults] = useState<string[]>([]);
 
   const handleNext = () => {
     router.push("/hearingTest/quickSin/quickSinTest");
@@ -54,6 +57,50 @@ export default function Screen() {
     }
   };
 
+  useEffect(() => {
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechResults = onSpeechResults;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const onSpeechStart = (e: any) => {
+    console.log("onSpeechStart: ", e);
+  };
+
+  const onSpeechResults = (e: any) => {
+    console.log("onSpeechResults: ", e);
+    setResults(e.value);
+    // Assuming you want to use the extracted keywords and score calculation here
+    // const sentenceScores = calculateScores(e.value.join(" "));
+    // const totalScore = sentenceScores.reduce(
+    //   (total, score) => total + score,
+    //   0
+    // );
+    // const snrLoss = 25.5 - 1.5 * totalScore;
+    // setScore(snrLoss);
+  };
+
+  const startRecognizing = async () => {
+    try {
+      await Voice.start("en-US");
+      setStarted(true);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const stopRecognizing = async () => {
+    try {
+      await Voice.stop();
+      setStarted(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const stopRecording = async () => {
     const currentRecording = recordingRef.current;
     if (!currentRecording) return;
@@ -64,25 +111,7 @@ export default function Screen() {
       console.log("Recording URI:", uri);
       if (uri) {
         setRecordings((prevRecordings) => [...prevRecordings, uri]);
-        const response = await uploadAudioAsync(uri);
-        if (response.ok) {
-          const responseData = await response.json();
-          const sentenceScores = Object.values(responseData);
-
-          // Sum the scores from all sentences
-          const totalScore: any = sentenceScores.reduce(
-            (total: any, score: any) => total + score,
-            0
-          );
-
-          // Calculate the SNR loss
-          // SNR Loss = 25.5 - (1.5 * Total Score)
-          const snrLoss = 25.5 - 1.5 * totalScore;
-
-          setScore(snrLoss);
-        } else {
-          console.error("Server response error:", response.status);
-        }
+        // const response = await uploadAudioAsync(uri);
       }
       console.log("Recording stopped and stored at", uri);
       setRecording(null);
@@ -155,6 +184,7 @@ export default function Screen() {
       );
       setSound(newSound);
       await startRecording();
+      await startRecognizing();
       playSound(newSound);
     } catch (error) {
       console.error("Error loading sound:", error);
@@ -169,6 +199,7 @@ export default function Screen() {
         if (newStatus.didJustFinish && !newStatus.isLooping) {
           // Sound has finished playing, stop recording
           console.log("Sound finished playing");
+          await stopRecognizing();
           await stopRecording();
         }
       }
