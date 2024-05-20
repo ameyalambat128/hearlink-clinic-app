@@ -7,6 +7,7 @@ import Voice from "@react-native-voice/voice";
 
 import ExternalLink from "@/components/ExternalLink";
 import { SetUpButton } from "@/components/ui/Button";
+import { extractKeywords } from "@/lib/utils";
 
 export default function Screen() {
   const router = useRouter();
@@ -73,6 +74,32 @@ export default function Screen() {
   const onSpeechResults = (e: any) => {
     console.log("onSpeechResults: ", e);
     setResults(e.value);
+
+    const transcription = e.value;
+    console.log("Transcription:", transcription);
+    // // Step 1: Separate words in the transcription
+    // const words = transcription.toLowerCase().split(/\s+/);
+
+    // // Step 2: Grade the transcription
+    // const trackId = 1;
+    // const sentenceCount = 6;
+    // let result = {};
+
+    // for (let i = 1; i <= sentenceCount; i++) {
+    //   const keywordsList = extractKeywords(trackId, i);
+    //   let count = 0;
+
+    //   keywordsList.forEach((keyword) => {
+    //     if (words.includes(keyword.toLowerCase())) {
+    //       count++;
+    //     }
+    //   });
+
+    //   result[String(i)] = count;
+    // }
+
+    console.log("Result:", result);
+
     // Assuming you want to use the extracted keywords and score calculation here
     // const sentenceScores = calculateScores(e.value.join(" "));
     // const totalScore = sentenceScores.reduce(
@@ -107,13 +134,13 @@ export default function Screen() {
     console.log("Stopping recording:", recording);
     try {
       await currentRecording.stopAndUnloadAsync();
-      const uri = currentRecording.getURI();
-      console.log("Recording URI:", uri);
-      if (uri) {
-        setRecordings((prevRecordings) => [...prevRecordings, uri]);
-        // const response = await uploadAudioAsync(uri);
-      }
-      console.log("Recording stopped and stored at", uri);
+      Voice.onSpeechResults = onSpeechResults;
+      // const uri = currentRecording.getURI();
+      // console.log("Recording URI:", uri);
+      // if (uri) {
+      //   setRecordings((prevRecordings) => [...prevRecordings, uri]);
+      // }
+      // console.log("Recording stopped and stored at", uri);
       setRecording(null);
     } catch (error) {
       console.error("Error stopping recording:", error);

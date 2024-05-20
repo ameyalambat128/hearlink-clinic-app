@@ -8,11 +8,12 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Link, Stack } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Colors from "@/constants/Colors";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,6 +52,7 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 function RootLayoutNav() {
+  const router = useRouter();
   return (
     <Providers>
       <Stack>
@@ -67,10 +69,20 @@ function RootLayoutNav() {
           options={{
             title: "Settings",
             headerLeft: () => (
-              <TouchableOpacity>
-                <Link href="/profile">
-                  <Ionicons name="chevron-back-outline" size={30} />
-                </Link>
+              <TouchableOpacity onPress={() => router.push("/(tabs)/profile")}>
+                <Ionicons name="chevron-back-outline" size={30} />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/pauseModal"
+          options={{
+            title: "Pause",
+            presentation: "modal",
+            headerRight: () => (
+              <TouchableOpacity onPress={() => router.dismiss()}>
+                <Ionicons name="close-outline" size={30} />
               </TouchableOpacity>
             ),
           }}

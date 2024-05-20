@@ -78,7 +78,7 @@ export default function Screen() {
 
   const handleNext = async () => {
     await stopRecording();
-    router.push("/hearingTest/quickSin/connectHeadphones");
+    router.push("/hearingTest/quickSin/chooseHeadphones");
   };
 
   useEffect(() => {

@@ -24,6 +24,22 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          headerRight: () => (
+            <TouchableOpacity className="pr-4">
+              <Link href="/settings">
+                <MaterialIcons name="settings" size={24} />
+              </Link>
+            </TouchableOpacity>
+          ),
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="person" size={24} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

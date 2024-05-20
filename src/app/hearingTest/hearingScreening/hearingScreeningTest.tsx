@@ -1,5 +1,5 @@
 import { AVPlaybackStatus, Audio } from "expo-av";
-import { useRouter } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -12,6 +12,8 @@ import {
 
 import { SetUpButton } from "@/components/ui/Button";
 import { usePauseStore, usePureToneResultsStore } from "@/store/store";
+import { Ionicons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 
 const frequencies: number[] = [1000, 2000, 4000, 500];
 const INITIAL_INTENSITY: number = 30;
@@ -226,7 +228,7 @@ export default function Screen() {
   const onPlaybackStatusUpdate = useCallback(
     async (newStatus: AVPlaybackStatus) => {
       setStatus(newStatus);
-      console.log(JSON.stringify(newStatus, null, 2));
+      // console.log(JSON.stringify(newStatus, null, 2));
     },
     [sound]
   );
@@ -291,6 +293,11 @@ export default function Screen() {
     }
   };
 
+  const testPaused = () => {
+    togglePause();
+    router.push("/(modals)/pauseModal");
+  };
+
   // On Component Mount Sound Loading
   useEffect(() => {
     loadAndPlaySound(frequencies[currentFrequencyIndex], INITIAL_INTENSITY);
@@ -338,6 +345,22 @@ export default function Screen() {
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
+      <Stack.Screen
+        options={{
+          title: "Hearing Test",
+          gestureEnabled: false,
+          headerLeft: () => <View />,
+          headerRight: () => (
+            <TouchableOpacity onPress={testPaused}>
+              <Ionicons
+                name="pause-outline"
+                size={30}
+                color={Colors["light"].text}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
           <Text className="pb-6 text-2xl font-bold">

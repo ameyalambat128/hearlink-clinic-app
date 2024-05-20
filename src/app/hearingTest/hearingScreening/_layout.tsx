@@ -104,41 +104,7 @@ export default function Layout() {
           ),
         }}
       />
-      <Stack.Screen
-        name="hearingScreeningTest"
-        options={{
-          title: "Hearing Test",
-          gestureEnabled: false,
-          headerLeft: () => <View />,
-          headerRight: () => (
-            <TouchableOpacity onPress={togglePause}>
-              <Link href="/hearingTest/hearingScreening/pauseModal">
-                <Ionicons
-                  name="pause-outline"
-                  size={30}
-                  color={Colors[colorScheme ?? "light"].text}
-                />
-              </Link>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="pauseModal"
-        options={{
-          title: "Pause",
-          presentation: "modal",
-          headerRight: () => (
-            <TouchableOpacity onPress={() => router.dismiss()}>
-              <Ionicons
-                name="close-outline"
-                size={30}
-                color={Colors[colorScheme ?? "light"].text}
-              />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+      <Stack.Screen name="hearingScreeningTest" />
       <Stack.Screen
         name="hearingScreeningResults"
         options={{

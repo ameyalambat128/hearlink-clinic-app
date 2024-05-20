@@ -26,20 +26,15 @@ export default function Layout() {
           ),
         }}
       />
+      <Stack.Screen name="noiseCheck" />
       <Stack.Screen
-        name="noiseCheck"
+        name="chooseHeadphones"
         options={{
           title: "Get Set Up",
-          headerLeft: () => <View />,
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.dispatch({ type: "POP_TO_TOP" });
-                navigation.dispatch({ type: "POP_TO_TOP" });
-              }}
-            >
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
               <Ionicons
-                name="close-outline"
+                name="chevron-back-outline"
                 size={30}
                 color={Colors[colorScheme ?? "light"].text}
               />

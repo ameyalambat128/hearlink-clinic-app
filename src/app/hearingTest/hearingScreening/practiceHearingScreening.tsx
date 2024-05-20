@@ -208,7 +208,7 @@ export default function Screen() {
 
         const audioFile =
           audioFilePaths[frequency.toString()][intensity.toString()];
-        console.log(audioFile, frequency, intensity);
+        console.log("Frequency =", frequency, "|", "Intensity =", intensity);
 
         const { sound: newSound } = await Audio.Sound.createAsync(
           audioFile,
@@ -227,7 +227,7 @@ export default function Screen() {
   const onPlaybackStatusUpdate = useCallback(
     async (newStatus: AVPlaybackStatus) => {
       setStatus(newStatus);
-      console.log(JSON.stringify(newStatus, null, 2));
+      // console.log(JSON.stringify(newStatus, null, 2));
     },
     [sound]
   );
@@ -332,7 +332,7 @@ export default function Screen() {
   useEffect(() => {
     return sound
       ? () => {
-          console.log("Unloading Sound");
+          // console.log("Unloading Sound");
           sound.unloadAsync();
         }
       : undefined;
