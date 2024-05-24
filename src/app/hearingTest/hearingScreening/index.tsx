@@ -7,7 +7,7 @@ export default function Screen() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/hearingTest/hearingScreening/noiseCheck");
+    router.push("/hearingTest/hearingScreening/enterDetails");
   };
 
   return (
