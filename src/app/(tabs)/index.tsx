@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import Page from "@/components/Page";
+import { useUserStore } from "@/store/store";
 
 const { width, height } = Dimensions.get("window");
 const ITEM_WIDTH = width * 0.8;
@@ -57,6 +58,9 @@ const tests: {
 
 export default function Hearing() {
   const router = useRouter();
+  const { name, birthDate } = useUserStore();
+  console.log(name);
+  console.log(birthDate);
 
   const nextPage = (href: any) => {
     router.push(href);

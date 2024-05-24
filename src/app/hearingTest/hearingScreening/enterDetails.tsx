@@ -16,11 +16,11 @@ import DateTimePicker, {
 import { SetUpButton } from "@/components/ui/Button";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
+import { useUserStore } from "@/store/store";
 
 export default function Screen() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [birthDate, setBirthDate] = useState<Date | null>(null);
+  const { name, birthDate, setName, setBirthDate } = useUserStore();
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
 

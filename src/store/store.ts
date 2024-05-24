@@ -28,12 +28,27 @@ export const usePureToneResultsStore = create<PureToneResultsStore>((set) => ({
     })),
 }));
 
+// Hearing Test User Details Store
+type UserState = {
+  name: string;
+  birthDate: Date | null;
+  setName: (name: string) => void;
+  setBirthDate: (birthDate: Date | null) => void;
+};
+
+export const useUserStore = create<UserState>((set) => ({
+  name: "",
+  birthDate: null,
+  setName: (name: string) => set({ name }),
+  setBirthDate: (birthDate: Date | null) => set({ birthDate }),
+}));
+
 // Questionnaire Store
 type QuestionnaireStore = {
   responses: Record<string, string | Record<string, string | null>>;
   addResponse: (
     questionId: string,
-    response: string | Record<string, string | null>,
+    response: string | Record<string, string | null>
   ) => void;
 };
 
