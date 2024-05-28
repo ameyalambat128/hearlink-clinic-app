@@ -6,9 +6,8 @@ import Colors from "@/constants/Colors";
 import { usePauseStore } from "@/store/store";
 
 export default function Layout() {
-  const colorScheme = useColorScheme();
   const router = useRouter();
-  const navigation = useNavigation();
+  const colorScheme = useColorScheme();
 
   const { togglePause } = usePauseStore();
   return (
@@ -128,8 +127,7 @@ export default function Layout() {
           headerRight: () => (
             <TouchableOpacity
               onPress={() => {
-                navigation.dispatch({ type: "POP_TO_TOP" });
-                navigation.dispatch({ type: "POP_TO_TOP" });
+                router.dismissAll();
               }}
             >
               <Ionicons

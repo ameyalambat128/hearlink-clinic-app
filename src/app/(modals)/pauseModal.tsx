@@ -1,25 +1,14 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-  View,
-  Text,
-} from "react-native";
+import { SafeAreaView, TouchableOpacity, Text } from "react-native";
 
-type SettingsItemProps = {
+type ModalItemProps = {
   name: string;
   onPress: () => void;
   group: "start" | "middle" | "end" | "none";
 };
 
-const SettingsItem: React.FC<SettingsItemProps> = ({
-  name,
-  onPress,
-  group,
-}) => {
+const ModalItem: React.FC<ModalItemProps> = ({ name, onPress, group }) => {
   // Determine the className based on the 'group' prop
   const groupClassName = `${
     group === "start" &&
@@ -46,18 +35,20 @@ export default function Modal() {
 
   return (
     <SafeAreaView className="flex-1 items-center">
-      <SettingsItem
+      <ModalItem
         name="Restart"
-        onPress={() =>
+        onPress={() => {
           router.push({
             pathname: "/hearingTest/hearingScreening/practiceHearingScreening",
-          })
-        }
+          });
+        }}
         group="none"
       />
-      <SettingsItem
+      <ModalItem
         name="Go back home"
-        onPress={() => router.push({ pathname: "/(tabs)/" })}
+        onPress={() => {
+          router.dismissAll();
+        }}
         group="none"
       />
     </SafeAreaView>

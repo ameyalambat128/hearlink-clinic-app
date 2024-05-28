@@ -26,6 +26,7 @@ export default function Screen() {
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || birthDate;
+    // TODO: Change format of date if required
     setBirthDate(currentDate);
   };
 

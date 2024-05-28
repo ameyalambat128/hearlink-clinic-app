@@ -16,7 +16,6 @@ import Colors from "@/constants/Colors";
 
 export default function Screen() {
   const router = useRouter();
-  const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
   const [permissionResponse, requestPermission] = Audio.usePermissions();
@@ -95,8 +94,8 @@ export default function Screen() {
             <TouchableOpacity
               onPress={async () => {
                 if (recordingRef.current) await stopRecording();
-                navigation.dispatch({ type: "POP_TO_TOP" });
-                navigation.dispatch({ type: "POP_TO_TOP" });
+                router.dismissAll();
+                router.dismissAll();
               }}
             >
               <Ionicons
