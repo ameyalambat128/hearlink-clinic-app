@@ -20,17 +20,23 @@ import { useUserStore } from "@/store/store";
 
 export default function Screen() {
   const router = useRouter();
-  const { name, birthDate, setName, setBirthDate } = useUserStore();
+  const [localName, setLocalName] = useState("");
+  const [localBirthDate, setLocalBirthDate] = useState<Date | null>(null);
+  const { setName, setBirthDate } = useUserStore();
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    const currentDate = selectedDate || birthDate;
+    const currentDate = selectedDate || localBirthDate;
     // TODO: Change format of date if required
-    setBirthDate(currentDate);
+    setLocalBirthDate(currentDate);
   };
 
+  const checkNext = localName === "" || localBirthDate === null;
+
   const handleNext = () => {
+    setName(localName);
+    setBirthDate(localBirthDate);
     router.push("/hearingTest/hearingScreening/noiseCheck");
   };
 
@@ -49,8 +55,8 @@ export default function Screen() {
             <Feather name="user" size={20} className="mr-2" />
             <TextInput
               placeholder="Enter your name"
-              value={name}
-              onChangeText={setName}
+              value={localName}
+              onChangeText={setLocalName}
               autoComplete="name"
             />
           </View>
@@ -62,13 +68,13 @@ export default function Screen() {
             }}
           >
             <Feather name="calendar" size={19} className="mr-2" />
-            {birthDate ? (
+            {localBirthDate ? (
               <Text>
-                {birthDate.getDate().toString().padStart(2, "0") +
+                {localBirthDate.getDate().toString().padStart(2, "0") +
                   "/" +
-                  (birthDate.getMonth() + 1).toString().padStart(2, "0") +
+                  (localBirthDate.getMonth() + 1).toString().padStart(2, "0") +
                   "/" +
-                  birthDate.getFullYear()}
+                  localBirthDate.getFullYear()}
               </Text>
             ) : (
               <Text className="text-gray-400/70">Select Birth Date</Text>
@@ -87,7 +93,7 @@ export default function Screen() {
                 <View className="bg-white rounded-2xl p-5 w-11/12 items-center">
                   <DateTimePicker
                     testID="dateTimePicker"
-                    value={birthDate ? birthDate : new Date()}
+                    value={localBirthDate ? localBirthDate : new Date()}
                     mode="date"
                     display="inline"
                     onChange={onDateChange}
@@ -121,7 +127,11 @@ export default function Screen() {
           )}
         </View>
         <View className="mb-4 flex items-center">
-          <SetUpButton title="Next" handlePress={handleNext} />
+          <SetUpButton
+            title="Next"
+            disabled={checkNext}
+            handlePress={handleNext}
+          />
         </View>
       </View>
     </SafeAreaView>
