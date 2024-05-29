@@ -28,7 +28,13 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>myapp</string>
-          <string>com.amprow.hearlink</string>
+          <string>com.hearlink.hearlink</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+hearlink</string>
         </array>
       </dict>
     </array>

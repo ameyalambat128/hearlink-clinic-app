@@ -15,7 +15,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.amprow.hearlink",
+      "bundleIdentifier": "com.hearlink.hearlink",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "We need access to your microphone for sound playback.",
         "NSSpeechRecognitionUsageDescription": "We need access to speech recognition to process your voice commands."
