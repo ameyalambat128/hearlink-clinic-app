@@ -1,4 +1,4 @@
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Text, Image, SafeAreaView, View } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
@@ -7,11 +7,11 @@ export default function QuickSin() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/hearingTest/quickSin/noiseCheck");
+    router.push("/hearingTest/quickSin/enterDetails");
   };
 
   return (
-    <SafeAreaView className="flex h-full items-center justify-center">
+    <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
           <Text className="pb-6 text-2xl font-bold">QuickSIN Test</Text>

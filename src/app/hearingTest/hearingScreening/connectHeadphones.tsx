@@ -11,13 +11,6 @@ export default function Screen() {
   const handleNext = () => {
     router.push("/hearingTest/hearingScreening/volumeAdjust");
   };
-  // useEffect(() => {
-  //   const checkHeadphonesConnected = async () => {
-  //     const isConnected = await isHeadphonesConnected();
-  //     setHeadphonesConnected(isConnected);
-  //   };
-  //   checkHeadphonesConnected();
-  // }, []);
 
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
