@@ -3,7 +3,7 @@
     "name": "Hearlink",
     "description": "Hearing Aid Reimagined",
     "slug": "hearlink",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/hearlink-icon.png",
     "scheme": "myapp",
@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.hearlink.hearlink",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "We need access to your microphone for sound playback.",
-        "NSSpeechRecognitionUsageDescription": "We need access to speech recognition to process your voice commands."
+        "NSSpeechRecognitionUsageDescription": "We need access to speech recognition to process your voice commands.",
+        "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to upload profile pictures."
       }
     },
     "android": {
