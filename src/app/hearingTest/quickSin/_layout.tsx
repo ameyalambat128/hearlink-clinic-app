@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, useNavigation, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, View, useColorScheme } from "react-native";
 
 import Colors from "@/constants/Colors";
@@ -7,7 +7,6 @@ import Colors from "@/constants/Colors";
 export default function Layout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
-  const navigation = useNavigation();
 
   return (
     <Stack>
@@ -58,7 +57,22 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
-        name="connectHeadphones"
+        name="connectAirpodsPro"
+        options={{
+          title: "Get Set Up",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={30}
+                color={Colors[colorScheme ?? "light"].text}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="connectAirpodsMax"
         options={{
           title: "Get Set Up",
           headerLeft: () => (

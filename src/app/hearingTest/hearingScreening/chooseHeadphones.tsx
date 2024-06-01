@@ -1,7 +1,6 @@
-import { Link, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
-  Button,
   Image,
   SafeAreaView,
   View,
@@ -13,7 +12,6 @@ import { SetUpButton } from "@/components/ui/Button";
 
 export default function Screen() {
   const router = useRouter();
-  const [headphonesConnected, setHeadphonesConnected] = useState(true);
   const [selectedHeadphones, setSelectedHeadphones] = useState<
     "airpodsPro" | "airpodsMax" | null
   >(null);
@@ -25,7 +23,11 @@ export default function Screen() {
   };
 
   const handleNext = () => {
-    router.push("/hearingTest/hearingScreening/connectHeadphones");
+    if (selectedHeadphones === "airpodsPro") {
+      router.push("/hearingTest/hearingScreening/connectAirpodsPro");
+    } else if (selectedHeadphones === "airpodsMax") {
+      router.push("/hearingTest/hearingScreening/connectAirpodsMax");
+    }
   };
 
   return (
@@ -70,12 +72,11 @@ export default function Screen() {
           </TouchableOpacity>
         </View>
         <View className="mb-4 flex items-center">
-          {/* Disable Link interaction when headphones are not connected */}
-          {headphonesConnected ? (
-            <SetUpButton title="Next" handlePress={handleNext} />
-          ) : (
-            <Button title="Next" disabled />
-          )}
+          <SetUpButton
+            title="Next"
+            disabled={!selectedHeadphones}
+            handlePress={handleNext}
+          />
         </View>
       </View>
     </SafeAreaView>

@@ -2,8 +2,9 @@ import { useRouter } from "expo-router";
 import { Text, Image, SafeAreaView, View } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
+import { Video, ResizeMode } from "expo-av";
 
-export default function DoNotDisturb() {
+export default function Screen() {
   const router = useRouter();
 
   const handleNext = () => {
@@ -17,21 +18,23 @@ export default function DoNotDisturb() {
           <Text className="pb-6 text-2xl font-bold">
             Turn on Do Not Disturb
           </Text>
-          {/* TODO: Description update here */}
           <Text className="text-md text-center font-medium">
             To avoid interruptions, and to ensure the most accurate results,
             turn on Do Not Disturb
           </Text>
         </View>
-        <View className="shadow-2xl">
-          <Image
-            source={require("../../../../assets/media/doNotDisturb.gif")} // Replace with your volume icon
-            resizeMode="contain"
+        <View className="items-center">
+          <Video
+            source={require("../../../../assets/media/do-not-disturb.mp4")}
             style={{
-              height: 500,
+              height: 480,
               width: "100%",
               borderRadius: 10,
             }}
+            isLooping={true}
+            shouldPlay={true}
+            isMuted={true}
+            resizeMode={ResizeMode.COVER}
           />
         </View>
         <View className="mb-4 flex items-center">
