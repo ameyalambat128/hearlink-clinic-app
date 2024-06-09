@@ -16,18 +16,18 @@ export default function Screen() {
     "airpodsPro" | "airpodsMax" | null
   >(null);
 
+  const handleNext = () => {
+    if (selectedHeadphones === "airpodsPro") {
+      router.push("/hearing-test/quickSin/connectAirpodsPro");
+    } else if (selectedHeadphones === "airpodsMax") {
+      router.push("/hearing-test/quickSin/connectAirpodsMax");
+    }
+  };
+
   const handleHeadphonesSelection = (
     headphonesType: "airpodsPro" | "airpodsMax"
   ) => {
     setSelectedHeadphones(headphonesType);
-  };
-
-  const handleNext = () => {
-    if (selectedHeadphones === "airpodsPro") {
-      router.push("/hearing-test/hearingScreening/connectAirpodsPro");
-    } else if (selectedHeadphones === "airpodsMax") {
-      router.push("/hearing-test/quickSin/chooseHeadphones");
-    }
   };
 
   return (

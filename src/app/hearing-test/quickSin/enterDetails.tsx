@@ -26,6 +26,12 @@ export default function Screen() {
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
 
+  const handleNext = () => {
+    setName(localName);
+    setBirthDate(localBirthDate);
+    router.push("/hearing-test/quickSin/noiseCheck");
+  };
+
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || localBirthDate;
     // TODO: Change format of date if required
@@ -33,12 +39,6 @@ export default function Screen() {
   };
 
   const checkNext = localName === "" || localBirthDate === null;
-
-  const handleNext = () => {
-    setName(localName);
-    setBirthDate(localBirthDate);
-    router.push("/hearing-test/quickSin/noiseCheck");
-  };
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">

@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { AVPlaybackStatus, Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";

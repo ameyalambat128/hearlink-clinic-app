@@ -26,6 +26,11 @@ export default function Screen() {
   const [status, setStatus] = useState<Audio.RecordingStatus | null>(null);
   const [meter, setMeter] = useState(0);
 
+  const handleNext = async () => {
+    await stopRecording();
+    router.push("/hearing-test/quickSin/chooseHeadphones");
+  };
+
   const startRecording = async () => {
     try {
       if (recordingRef.current) recordingRef.current.stopAndUnloadAsync();
@@ -73,11 +78,6 @@ export default function Screen() {
 
   const startMetering = async () => {
     await startRecording();
-  };
-
-  const handleNext = async () => {
-    await stopRecording();
-    router.push("/hearing-test/quickSin/chooseHeadphones");
   };
 
   useEffect(() => {
