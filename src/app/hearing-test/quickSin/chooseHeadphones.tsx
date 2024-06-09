@@ -26,7 +26,7 @@ export default function Screen() {
     if (selectedHeadphones === "airpodsPro") {
       router.push("/hearing-test/hearingScreening/connectAirpodsPro");
     } else if (selectedHeadphones === "airpodsMax") {
-      router.push("/hearing-test/hearingScreening/connectAirpodsMax");
+      router.push("/hearing-test/quickSin/chooseHeadphones");
     }
   };
 
