@@ -2,18 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import "../global.css";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Link, Stack, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Colors from "@/constants/Colors";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -58,7 +53,7 @@ function RootLayoutNav() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
-          name="hearingTest"
+          name="hearing-test"
           options={{
             headerShown: false,
             presentation: "fullScreenModal",
@@ -76,7 +71,7 @@ function RootLayoutNav() {
           }}
         />
         <Stack.Screen
-          name="(modals)/pauseModal"
+          name="(modals)/pause-modal"
           options={{
             title: "Pause",
             presentation: "modal",

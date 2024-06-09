@@ -34,7 +34,7 @@ const tests: {
     name: "CEDRA Questionnaire",
     description:
       "The CEDRA (Client Experience of Deafness Rating Assessment) questionnaire is a comprehensive tool designed to evaluate the unique experiences and challenges faced by individuals with hearing loss.",
-    link: "/hearingTest/questionnaire",
+    link: "/hearing-test/questionnaire",
     image: require("../../../assets/images/cedra-logo.png"),
   },
   {
@@ -42,7 +42,7 @@ const tests: {
     name: "Hearing Screening Test",
     description:
       "A hearing screening test is a quick and basic procedure used to identify individuals who may have hearing loss and require a more comprehensive auditory assessment.",
-    link: "/hearingTest/hearingScreening",
+    link: "/hearing-test/hearingScreening",
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
   {
@@ -50,7 +50,7 @@ const tests: {
     name: "Quick SIN Test",
     description:
       "The QuickSIN test is a rapid and effective assessment tool used in audiology to measure a person's ability to understand speech in noisy environments, helping to identify issues with speech discrimination.",
-    link: "/hearingTest/quickSin",
+    link: "/hearing-test/quickSin",
     image: require("../../../assets/images/quicksin-logo.png"),
   },
   { id: "empty-right" },
@@ -159,9 +159,9 @@ export default function Hearing() {
                     style={{
                       width: ITEM_WIDTH * 0.8,
                       height: ITEM_WIDTH * 0.8,
-                      resizeMode: "contain",
                       borderRadius: 24,
                     }}
+                    resizeMode="contain"
                   />
                   <Text className="text-xl font-bold my-6">{item.name}</Text>
                   <Text className="text-center font-medium text-gray-700">
