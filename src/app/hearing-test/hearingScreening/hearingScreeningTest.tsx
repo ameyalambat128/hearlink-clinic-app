@@ -451,6 +451,7 @@ export default function Screen() {
       } else {
         console.log("Test completed for both ears:", results);
         // Navigate to the results screen or perform any other desired actions
+        handleNext();
       }
     }
   };
