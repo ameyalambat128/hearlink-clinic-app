@@ -3,7 +3,7 @@
     "name": "Hearlink",
     "description": "Hearing Aid Reimagined",
     "slug": "hearlink",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "orientation": "portrait",
     "icon": "./assets/images/hearlink-icon.png",
     "scheme": "myapp",
@@ -56,6 +56,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b60c6656-8a99-45e2-a270-41a3587c7919"
+      }
     }
   }
 }
