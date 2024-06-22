@@ -27,6 +27,7 @@ export default function Screen() {
   const [meter, setMeter] = useState(0);
 
   const handleNext = async () => {
+    recordingRef.current = null;
     await stopRecording();
     router.push("/hearing-test/quickSin/chooseHeadphones");
   };
@@ -72,8 +73,6 @@ export default function Screen() {
     if (!currentRecording) return;
     await currentRecording.stopAndUnloadAsync();
     console.log("Recording stopped");
-    const uri = currentRecording.getURI();
-    console.log("Recording URI:", uri);
   };
 
   const startMetering = async () => {
@@ -83,6 +82,15 @@ export default function Screen() {
   useEffect(() => {
     startMetering();
   }, []);
+
+  useEffect(() => {
+    return recordingRef.current
+      ? () => {
+          console.log("Unloading Recording");
+          recordingRef.current?.stopAndUnloadAsync();
+        }
+      : undefined;
+  }, [recordingRef.current]);
 
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
