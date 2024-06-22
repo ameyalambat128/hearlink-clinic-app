@@ -1,4 +1,4 @@
-import { AVPlaybackStatus, Audio } from "expo-av";
+import { AVPlaybackStatus, Audio, InterruptionModeIOS } from "expo-av";
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView, TouchableOpacity, View, Text } from "react-native";
@@ -340,9 +340,8 @@ export default function Screen() {
 
         await Audio.setAudioModeAsync({
           playsInSilentModeIOS: true,
-          playThroughEarpieceAndroid: false,
+          interruptionModeIOS: InterruptionModeIOS.DoNotMix,
           staysActiveInBackground: false,
-          shouldDuckAndroid: false,
         });
 
         const audioFile =

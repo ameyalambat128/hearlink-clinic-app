@@ -27,8 +27,8 @@ export default function Screen() {
   const [meter, setMeter] = useState(0);
 
   const handleNext = async () => {
-    recordingRef.current = null;
     await stopRecording();
+    recordingRef.current = null;
     router.push("/hearing-test/hearingScreening/chooseHeadphones");
   };
 
@@ -39,11 +39,8 @@ export default function Screen() {
       if (permission.status === "granted") {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
-          staysActiveInBackground: true,
+          staysActiveInBackground: false,
           playsInSilentModeIOS: true,
-          // Android-specific settings
-          shouldDuckAndroid: true,
-          playThroughEarpieceAndroid: false,
         });
 
         const { recording: newRecording } = await Audio.Recording.createAsync(
@@ -73,6 +70,12 @@ export default function Screen() {
     if (!currentRecording) return;
     await currentRecording.stopAndUnloadAsync();
     console.log("Recording stopped");
+
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: false,
+      playsInSilentModeIOS: false,
+    });
   };
 
   const startMetering = async () => {
