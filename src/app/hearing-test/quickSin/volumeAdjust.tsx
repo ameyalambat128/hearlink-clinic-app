@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { AVPlaybackStatus, Audio } from "expo-av";
 import { useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -21,6 +21,8 @@ export default function VolumeAdjust() {
 
   const handleNext = () => {
     router.push("/hearing-test/quickSin/doNotDisturb");
+    sound?.pauseAsync();
+    sound.unloadAsync();
   };
 
   const playSound = useCallback(async (soundToPlay: Audio.Sound) => {
@@ -72,6 +74,15 @@ export default function VolumeAdjust() {
     },
     []
   );
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
