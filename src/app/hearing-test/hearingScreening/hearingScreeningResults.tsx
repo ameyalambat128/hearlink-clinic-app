@@ -1,11 +1,15 @@
 import { Foundation, Ionicons } from "@expo/vector-icons";
 import { FlatList, SafeAreaView, View, Text } from "react-native";
 
-import { usePureToneResultsStore } from "@/store/store";
+import { useHearingScreeningResultsStore } from "@/store/store";
 
 export default function Screen() {
-  const testResults = usePureToneResultsStore((state) => state.testResults);
-  console.log(testResults);
+  const { leftEarResults, rightEarResults } = useHearingScreeningResultsStore(
+    (state) => ({
+      leftEarResults: state.leftEarResults,
+      rightEarResults: state.rightEarResults,
+    })
+  );
 
   const calculate = (score: number) => {
     if (score < 25) {
@@ -26,10 +30,11 @@ export default function Screen() {
           />
         </View>
         <View className="flex items-center">
-          <Text className="mb-8 text-center text-2xl font-bold">Results</Text>
+          <Text className="mb-6 text-center text-2xl font-bold">Results</Text>
+          <Text className="mb-4 text-center text-2xl font-bold">Right Ear</Text>
           <FlatList
-            data={Object.keys(testResults)}
-            className="mt-10"
+            data={Object.keys(rightEarResults)}
+            className=""
             keyExtractor={(item) => item}
             renderItem={({ item }: { item: any }) => (
               <View className="flex-row items-center">
@@ -37,12 +42,12 @@ export default function Screen() {
                 <Text className="mx-4 text-2xl font-bold">-</Text>
                 <Text
                   className={`text-2xl font-bold ${
-                    calculate(testResults[item]) === "Pass"
+                    calculate(rightEarResults[item]) === "Pass"
                       ? "text-green-500"
                       : "text-red-500"
                   }`}
                 >
-                  {calculate(testResults[item]) === "Pass" ? (
+                  {calculate(rightEarResults[item]) === "Pass" ? (
                     <Ionicons
                       name="checkmark-outline"
                       size={24}
@@ -51,7 +56,37 @@ export default function Screen() {
                   ) : (
                     <Ionicons name="close-outline" size={24} color="red" />
                   )}
-                  {calculate(testResults[item])}
+                  {calculate(rightEarResults[item])}
+                </Text>
+              </View>
+            )}
+          />
+          <Text className="my-4 text-center text-2xl font-bold">Left Ear</Text>
+          <FlatList
+            data={Object.keys(leftEarResults)}
+            className=""
+            keyExtractor={(item) => item}
+            renderItem={({ item }: { item: any }) => (
+              <View className="flex-row items-center">
+                <Text className="text-2xl font-bold">{item} Hz</Text>
+                <Text className="mx-4 text-2xl font-bold">-</Text>
+                <Text
+                  className={`text-2xl font-bold ${
+                    calculate(leftEarResults[item]) === "Pass"
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {calculate(leftEarResults[item]) === "Pass" ? (
+                    <Ionicons
+                      name="checkmark-outline"
+                      size={24}
+                      color="green"
+                    />
+                  ) : (
+                    <Ionicons name="close-outline" size={24} color="red" />
+                  )}
+                  {calculate(leftEarResults[item])}
                 </Text>
               </View>
             )}

@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
-import { usePauseStore, usePureToneResultsStore } from "@/store/store";
+import { usePauseStore } from "@/store/store";
 
 const frequencies: number[] = [1000];
 const INITIAL_INTENSITY: number = 30;
@@ -168,7 +168,6 @@ const audioFilePaths: {
 export default function Screen() {
   const router = useRouter();
   const { isPaused, togglePause } = usePauseStore();
-  const setTestResult = usePureToneResultsStore((state) => state.setTestResult);
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [status, setStatus] = useState<AVPlaybackStatus>();
@@ -259,7 +258,6 @@ export default function Screen() {
         console.log(
           `Test completed for ${frequencies[currentFrequencyIndex]} Hz, Final Intensity: ${currentIntensity} dB`
         );
-        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
         moveToNextFrequency();
       } else {
         await decreaseIntensity();

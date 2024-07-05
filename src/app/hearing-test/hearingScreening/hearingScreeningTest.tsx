@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView, TouchableOpacity, View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { usePauseStore, usePureToneResultsStore } from "@/store/store";
+import { usePauseStore, useHearingScreeningResultsStore } from "@/store/store";
 import Colors from "@/constants/Colors";
 
 const frequencies: number[] = [1000, 2000, 4000, 500];
@@ -304,8 +304,8 @@ const audioFilePathsLeft: {
 export default function Screen() {
   const router = useRouter();
   const { isPaused, togglePause } = usePauseStore();
-  const setGTestResult = usePureToneResultsStore(
-    (state) => state.setTestResult
+  const setGTestResult = useHearingScreeningResultsStore(
+    (state) => state.setTestResults
   );
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -361,7 +361,7 @@ export default function Screen() {
         console.error("Error loading sound:", error);
       }
     },
-    [sound, playSound]
+    [sound, currentEar, playSound]
   );
 
   const onPlaybackStatusUpdate = useCallback(
@@ -397,7 +397,7 @@ export default function Screen() {
     } else {
       if (lastResponseWasNo) {
         console.log(
-          `Test completed for ${frequencies[currentFrequencyIndex]} Hz, Final Intensity: ${currentIntensity} dB`
+          `${currentEar}: Test completed for ${frequencies[currentFrequencyIndex]} Hz, Final Intensity: ${currentIntensity} dB`
         );
         setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
         moveToNextFrequency();
@@ -429,11 +429,16 @@ export default function Screen() {
         [frequency]: intensity,
       },
     }));
+  };
 
-    if (currentEar === "left") {
-      // TODO: Both ears have been tested, update the global state
-      // setPureToneResults(results.left, results.right);
-    }
+  const finishTest = () => {
+    setResults((currentResults) => {
+      console.log("Finish Test: ", currentResults);
+      // Both ears have been tested, update the global state
+      setGTestResult(currentResults.right, currentResults.left);
+      return currentResults;
+    });
+    handleNext();
   };
 
   const moveToNextFrequency = () => {
@@ -448,9 +453,8 @@ export default function Screen() {
         setCurrentIntensity(INITIAL_INTENSITY);
         setIsInitialPhase(true);
       } else {
-        console.log("Test completed for both ears:", results);
-        // Navigate to the results screen or perform any other desired actions
-        handleNext();
+        // Test is complete for both ears
+        finishTest();
       }
     }
   };

@@ -11,22 +11,26 @@ export const usePauseStore = create<PauseStore>((set) => ({
   togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
 }));
 
-// Pure Tone Results Store
-type PureToneResultsStore = {
-  testResults: Record<number, number>;
-  setTestResult: (frequency: number, intensity: number) => void;
+// Hearing Screening Results Store
+type HearingScreeningResultsStore = {
+  leftEarResults: Record<number, number>;
+  rightEarResults: Record<number, number>;
+  setTestResults: (
+    leftEar: Record<number, number>,
+    rightEar: Record<number, number>
+  ) => void;
 };
 
-export const usePureToneResultsStore = create<PureToneResultsStore>((set) => ({
-  testResults: {},
-  setTestResult: (frequency, intensity) =>
-    set((state) => ({
-      testResults: {
-        ...state.testResults,
-        [frequency]: intensity,
-      },
-    })),
-}));
+export const useHearingScreeningResultsStore =
+  create<HearingScreeningResultsStore>((set) => ({
+    leftEarResults: {},
+    rightEarResults: {},
+    setTestResults: (leftEar, rightEar) =>
+      set(() => ({
+        leftEarResults: leftEar,
+        rightEarResults: rightEar,
+      })),
+  }));
 
 // Hearing Test User Details Store
 type UserState = {

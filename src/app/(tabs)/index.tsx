@@ -42,7 +42,7 @@ const tests: {
     name: "Hearing Screening Test",
     description:
       "A hearing screening test is a quick and basic procedure used to identify individuals who may have hearing loss and require a more comprehensive auditory assessment.",
-    link: "/hearing-test/hearingScreening",
+    link: "/hearing-test/hearingScreening/hearingScreeningTest",
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
   {
