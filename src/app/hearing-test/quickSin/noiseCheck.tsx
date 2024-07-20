@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
-import { Stack, useNavigation, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   SafeAreaView,
@@ -27,8 +27,8 @@ export default function Screen() {
   const [meter, setMeter] = useState(0);
 
   const handleNext = async () => {
-    recordingRef.current = null;
     await stopRecording();
+    recordingRef.current = null;
     router.push("/hearing-test/quickSin/chooseHeadphones");
   };
 
@@ -103,8 +103,8 @@ export default function Screen() {
           headerLeft: () => <View />,
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => {
-                stopRecording();
+              onPress={async () => {
+                if (recordingRef.current) await stopRecording();
                 router.dismissAll();
                 router.dismissAll();
               }}
