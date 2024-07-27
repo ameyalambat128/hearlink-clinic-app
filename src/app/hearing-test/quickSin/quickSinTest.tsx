@@ -3,23 +3,25 @@ import { AVPlaybackStatus, Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text, SafeAreaView, TouchableOpacity, View } from "react-native";
+import Voice from "@react-native-voice/voice";
 
 import ExternalLink from "@/components/ExternalLink";
 import { SetUpButton } from "@/components/ui/Button";
+import { extractKeywords } from "@/lib/utils";
 
 const audioFilePaths = {
-  track_03: require("../../../../assets/audio/quicksin/track_03.mp3"),
-  track_04: require("../../../../assets/audio/quicksin/track_04.mp3"),
-  track_05: require("../../../../assets/audio/quicksin/track_05.mp3"),
-  track_06: require("../../../../assets/audio/quicksin/track_06.mp3"),
-  track_07: require("../../../../assets/audio/quicksin/track_07.mp3"),
-  track_08: require("../../../../assets/audio/quicksin/track_08.mp3"),
-  track_09: require("../../../../assets/audio/quicksin/track_09.mp3"),
-  track_10: require("../../../../assets/audio/quicksin/track_10.mp3"),
-  track_11: require("../../../../assets/audio/quicksin/track_11.mp3"),
-  track_12: require("../../../../assets/audio/quicksin/track_12.mp3"),
-  track_13: require("../../../../assets/audio/quicksin/track_13.mp3"),
-  track_14: require("../../../../assets/audio/quicksin/track_14.mp3"),
+  3: require("../../../../assets/audio/quicksin/track_03.mp3"),
+  4: require("../../../../assets/audio/quicksin/track_04.mp3"),
+  5: require("../../../../assets/audio/quicksin/track_05.mp3"),
+  6: require("../../../../assets/audio/quicksin/track_06.mp3"),
+  7: require("../../../../assets/audio/quicksin/track_07.mp3"),
+  8: require("../../../../assets/audio/quicksin/track_08.mp3"),
+  9: require("../../../../assets/audio/quicksin/track_09.mp3"),
+  10: require("../../../../assets/audio/quicksin/track_10.mp3"),
+  11: require("../../../../assets/audio/quicksin/track_11.mp3"),
+  12: require("../../../../assets/audio/quicksin/track_12.mp3"),
+  13: require("../../../../assets/audio/quicksin/track_13.mp3"),
+  14: require("../../../../assets/audio/quicksin/track_14.mp3"),
 };
 
 export default function Screen() {
@@ -32,7 +34,9 @@ export default function Screen() {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [result, setResult] = useState<Record<string, number>>({});
   const [score, setScore] = useState<number | null>(null);
-  const [trackNumber, setTrackNumber] = useState<string | null>(null);
+  const [started, setStarted] = useState<boolean>(false);
+  const [finished, setFinished] = useState<boolean>(false);
+  const trackNumberRef = useRef<string | null>(null);
 
   const handleNext = () => {
     // router.push("/hearing-test/quickSin/volumeAdjust");
@@ -56,6 +60,7 @@ export default function Screen() {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
           staysActiveInBackground: true,
+          playsInSilentModeIOS: true,
         });
         const newRecording = new Audio.Recording();
         await newRecording.prepareToRecordAsync(
@@ -69,72 +74,95 @@ export default function Screen() {
     }
   };
 
+  useEffect(() => {
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechResults = onSpeechResults;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const onSpeechStart = (e: any) => {
+    console.log("onSpeechStart: ", e);
+  };
+
+  /*
+   * TODO: onSpeechResults
+   * Test is still not completely correct
+   * Need to make sure that each sentence is graded seperately
+   * currently words which is all the word in the transcription seperated by space is being graded
+   * Need to make sure that each sentence is graded seperately
+   * Somehow need to add markers whenever a sentence is completed or
+   * somehow add punctuation to the transcription
+   */
+  const onSpeechResults = (e: any) => {
+    const transcription = e.value;
+    console.log("Transcription:", transcription);
+
+    // Step 1: Separate words in the transcription
+    const words = transcription[0].toLowerCase().split(/\s+/);
+    console.log("Words:", words);
+
+    // Step 2: Grade the transcription
+    console.log("Track ID:", trackNumberRef.current);
+    const trackId = trackNumberRef.current;
+
+    const sentenceCount = 6;
+    let result: { [key: number]: number } = {};
+
+    for (let i = 1; i <= sentenceCount; i++) {
+      const keywordsList = extractKeywords(trackId, i);
+      let count = 0;
+      keywordsList.forEach((keyword: string) => {
+        if (words.includes(keyword.toLowerCase())) {
+          count++;
+        }
+      });
+      result[i] = count;
+    }
+
+    console.log("Result:", result);
+
+    const totalScore = Object.values(result).reduce(
+      (total, score) => total + score,
+      0
+    );
+    const snrLoss = 25.5 - totalScore;
+    console.log("SNR Loss:", snrLoss);
+    setScore(snrLoss);
+  };
+
+  const startRecognizing = async () => {
+    try {
+      await Voice.start("en-US");
+      setStarted(true);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const stopRecognizing = async () => {
+    try {
+      await Voice.stop();
+      setStarted(false);
+      setFinished(true);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const stopRecording = async () => {
     const currentRecording = recordingRef.current;
     if (!currentRecording) return;
     console.log("Stopping recording:", recording);
     try {
       await currentRecording.stopAndUnloadAsync();
-      const uri = currentRecording.getURI();
-      console.log("Recording URI:", uri);
-      if (uri) {
-        setRecordings((prevRecordings) => [...prevRecordings, uri]);
-        const response = await uploadAudioAsync(uri);
-        if (response.ok) {
-          const responseData = await response.json();
-          const sentenceScores = Object.values(responseData);
-
-          // Sum the scores from all sentences
-          const totalScore: any = sentenceScores.reduce(
-            (total: any, score: any) => total + score,
-            0
-          );
-
-          // Calculate the SNR loss
-          const snrLoss = 25.5 - totalScore;
-
-          setScore(snrLoss);
-        } else {
-          console.error("Server response error:", response.status);
-        }
-      }
-      console.log("Recording stopped and stored at", uri);
+      Voice.onSpeechResults = onSpeechResults;
       setRecording(null);
     } catch (error) {
       console.error("Error stopping recording:", error);
     }
-  };
-
-  const uploadAudioAsync = async (uri: string) => {
-    console.log("Uploading " + uri);
-    let apiUrl = "http://127.0.0.1:5000/evaluate"; // Make sure to use the correct port
-    let uriParts = uri.split(".");
-    let fileType = uriParts[uriParts.length - 1];
-
-    let formData = new FormData();
-    // @ts-ignore
-    formData.append("file", {
-      uri,
-      name: `recording.${fileType}`,
-      type: `audio/x-${fileType}`,
-    });
-
-    const metadata = {
-      quicksin_audio: trackNumber,
-    };
-    formData.append("metadata", JSON.stringify(metadata));
-
-    let options = {
-      method: "POST",
-      body: formData,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data",
-      },
-    };
-
-    console.log("POSTing " + uri + " to " + apiUrl);
-    return fetch(apiUrl, options);
   };
 
   const playRecording = async (uri: string) => {
@@ -161,13 +189,12 @@ export default function Screen() {
 
       const trackKeys = Object.keys(audioFilePaths);
       const randomIndex = Math.floor(Math.random() * trackKeys.length);
-      const trackName = trackKeys[randomIndex];
-      // @ts-ignore
-      const audioFile = audioFilePaths[trackName];
-      console.log(trackName);
+      const randomTrackNumber = trackKeys[randomIndex];
 
-      // Save the track name
-      setTrackNumber(trackName);
+      // @ts-ignore
+      const audioFile = audioFilePaths[randomTrackNumber];
+      console.log("Track: track_" + randomTrackNumber);
+      console.log(randomTrackNumber);
 
       const { sound: newSound } = await Audio.Sound.createAsync(
         audioFile,
@@ -175,8 +202,9 @@ export default function Screen() {
         onPlaybackStatusUpdate
       );
       setSound(newSound);
-      await startRecording();
       playSound(newSound);
+      trackNumberRef.current = randomTrackNumber;
+      await startRecognizing();
     } catch (error) {
       console.error("Error loading sound:", error);
     }
@@ -190,11 +218,13 @@ export default function Screen() {
         if (newStatus.didJustFinish && !newStatus.isLooping) {
           // Sound has finished playing, stop recording
           console.log("Sound finished playing");
-          await stopRecording();
+          Voice.onSpeechResults = onSpeechResults;
+          await stopRecognizing();
+          // await stopRecording();
         }
       }
     },
-    [stopRecording]
+    [stopRecognizing]
   );
 
   // Sound Unloading
@@ -245,19 +275,11 @@ export default function Screen() {
           )}
         </View>
         <View className="items-center">
-          {score && (
+          {finished && score && (
             <Text className="text-2xl font-bold">
               Your SNR Loss is {score} dB
             </Text>
           )}
-          {/* Show Recordings */}
-          {/* {recordings.map((uri, index) => (
-            <Button
-              key={index}
-              title={`Play Recording ${index + 1}`}
-              onPress={() => playRecording(uri)}
-            />
-          ))} */}
         </View>
         <View className="mb-4 flex items-center">
           <SetUpButton title="Next" handlePress={handleNext} disabled={false} />

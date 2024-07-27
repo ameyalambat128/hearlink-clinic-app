@@ -22,7 +22,7 @@ export default function VolumeAdjust() {
   const handleNext = () => {
     router.push("/hearing-test/quickSin/doNotDisturb");
     sound?.pauseAsync();
-    sound.unloadAsync();
+    sound?.unloadAsync();
   };
 
   const playSound = useCallback(async (soundToPlay: Audio.Sound) => {

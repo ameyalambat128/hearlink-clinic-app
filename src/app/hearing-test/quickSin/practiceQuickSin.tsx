@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { AVPlaybackStatus, Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,10 +19,13 @@ export default function Screen() {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [result, setResult] = useState<Record<string, number>>({});
   const [score, setScore] = useState<number | null>(null);
-  const [started, setStarted] = useState(false);
-  const [results, setResults] = useState<string[]>([]);
+  const [started, setStarted] = useState<boolean>(false);
+  const [finished, setFinished] = useState<boolean>(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    sound?.pauseAsync();
+    sound?.unloadAsync();
+    Voice.destroy().then(Voice.removeAllListeners);
     router.push("/hearing-test/quickSin/quickSinTest");
   };
 
@@ -71,43 +74,48 @@ export default function Screen() {
     console.log("onSpeechStart: ", e);
   };
 
+  /*
+   * TODO: onSpeechResults
+   * Test is still not completely correct
+   * Need to make sure that each sentence is graded seperately
+   * currently words which is all the word in the transcription seperated by space is being graded
+   * Need to make sure that each sentence is graded seperately
+   * Somehow need to add markers whenever a sentence is completed or
+   * somehow add punctuation to the transcription
+   */
   const onSpeechResults = (e: any) => {
-    console.log("onSpeechResults: ", e);
-    setResults(e.value);
-
     const transcription = e.value;
     console.log("Transcription:", transcription);
-    // // Step 1: Separate words in the transcription
-    // const words = transcription.toLowerCase().split(/\s+/);
 
-    // // Step 2: Grade the transcription
-    // const trackId = 1;
-    // const sentenceCount = 6;
-    // let result = {};
+    // Step 1: Separate words in the transcription
+    const words = transcription[0].toLowerCase().split(/\s+/);
+    console.log("Words:", words);
 
-    // for (let i = 1; i <= sentenceCount; i++) {
-    //   const keywordsList = extractKeywords(trackId, i);
-    //   let count = 0;
+    // Step 2: Grade the transcription
+    const trackId = "3";
+    const sentenceCount = 6;
+    let result: { [key: number]: number } = {};
 
-    //   keywordsList.forEach((keyword) => {
-    //     if (words.includes(keyword.toLowerCase())) {
-    //       count++;
-    //     }
-    //   });
-
-    //   result[String(i)] = count;
-    // }
+    for (let i = 1; i <= sentenceCount; i++) {
+      const keywordsList = extractKeywords(trackId, i);
+      let count = 0;
+      keywordsList.forEach((keyword: string) => {
+        if (words.includes(keyword.toLowerCase())) {
+          count++;
+        }
+      });
+      result[i] = count;
+    }
 
     console.log("Result:", result);
 
-    // Assuming you want to use the extracted keywords and score calculation here
-    // const sentenceScores = calculateScores(e.value.join(" "));
-    // const totalScore = sentenceScores.reduce(
-    //   (total, score) => total + score,
-    //   0
-    // );
-    // const snrLoss = 25.5 - 1.5 * totalScore;
-    // setScore(snrLoss);
+    const totalScore = Object.values(result).reduce(
+      (total, score) => total + score,
+      0
+    );
+    const snrLoss = 25.5 - totalScore;
+    console.log("SNR Loss:", snrLoss);
+    setScore(snrLoss);
   };
 
   const startRecognizing = async () => {
@@ -122,7 +130,10 @@ export default function Screen() {
   const stopRecognizing = async () => {
     try {
       await Voice.stop();
+      console.log("Stopped recognizing");
+
       setStarted(false);
+      setFinished(true);
     } catch (e) {
       console.error(e);
     }
@@ -134,7 +145,6 @@ export default function Screen() {
     console.log("Stopping recording:", recording);
     try {
       await currentRecording.stopAndUnloadAsync();
-      Voice.onSpeechResults = onSpeechResults;
       // const uri = currentRecording.getURI();
       // console.log("Recording URI:", uri);
       // if (uri) {
@@ -145,39 +155,6 @@ export default function Screen() {
     } catch (error) {
       console.error("Error stopping recording:", error);
     }
-  };
-
-  const uploadAudioAsync = async (uri: string) => {
-    console.log("Uploading " + uri);
-    let apiUrl = "http://127.0.0.1:5000/evaluate"; // Make sure to use the correct port
-    let uriParts = uri.split(".");
-    let fileType = uriParts[uriParts.length - 1];
-
-    let formData = new FormData();
-    // @ts-ignore
-    formData.append("file", {
-      uri,
-      name: `recording.${fileType}`,
-      type: `audio/x-${fileType}`,
-    });
-
-    // Include metadata if needed
-    const metadata = {
-      quicksin_audio: "track_03", // Replace with actual track number or other metadata
-    };
-    formData.append("metadata", JSON.stringify(metadata));
-
-    let options = {
-      method: "POST",
-      body: formData,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data",
-      },
-    };
-
-    console.log("POSTing " + uri + " to " + apiUrl);
-    return fetch(apiUrl, options);
   };
 
   const playRecording = async (uri: string) => {
@@ -226,12 +203,13 @@ export default function Screen() {
         if (newStatus.didJustFinish && !newStatus.isLooping) {
           // Sound has finished playing, stop recording
           console.log("Sound finished playing");
+          Voice.onSpeechResults = onSpeechResults;
           await stopRecognizing();
-          await stopRecording();
+          // await stopRecording();
         }
       }
     },
-    [stopRecording]
+    [stopRecognizing]
   );
 
   // Sound Unloading
@@ -281,7 +259,7 @@ export default function Screen() {
           )}
         </View>
         <View className="items-center">
-          {score && (
+          {finished && score && (
             <Text className="text-2xl font-bold">
               Your SNR Loss is {score} dB
             </Text>

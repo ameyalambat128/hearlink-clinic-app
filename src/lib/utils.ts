@@ -1,4 +1,4 @@
-export const extractKeywords = (trackId, sentenceId) => {
+export const extractKeywords = (trackId: string, sentenceId: number) => {
   const keywordList = [
     {
       "1": ["white", "silk", "jacket", "any", "shoes"],
@@ -98,5 +98,6 @@ export const extractKeywords = (trackId, sentenceId) => {
     },
   ];
 
-  return keywordList[trackId - 3][String(sentenceId)];
+  const trackIndex = parseInt(trackId) - 3;
+  return keywordList[trackIndex][String(sentenceId)];
 };
