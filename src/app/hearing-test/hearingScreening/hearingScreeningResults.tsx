@@ -32,7 +32,11 @@ export default function Screen() {
     setLoading(true);
     setError(null);
 
-    const url = "http://127.0.0.1:8080/generate_report";
+    const baseUrl = "http://127.0.0.1:8080";
+    const endpoint = "/generate_report";
+    const url = `${baseUrl}${endpoint}`;
+
+    // TODO: Replace with actual data
     const data = {
       date_of_test: "2024-06-11",
       name: "Ameya Lambat",
