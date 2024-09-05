@@ -1,7 +1,19 @@
 import { Foundation, Ionicons } from "@expo/vector-icons";
-import { FlatList, SafeAreaView, View, Text } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  Linking,
+  Modal,
+} from "react-native";
+import * as FileSystem from "expo-file-system";
+import Pdf from "react-native-pdf";
+import axios from "axios";
 
 import { useHearingScreeningResultsStore } from "@/store/store";
+import { useEffect, useState } from "react";
 
 export default function Screen() {
   const { leftEarResults, rightEarResults } = useHearingScreeningResultsStore(
@@ -11,6 +23,52 @@ export default function Screen() {
     })
   );
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pdfPath, setPdfPath] = useState<string | null>(null);
+  const [showPdf, setShowPdf] = useState(false);
+
+  const generateReport = async () => {
+    setLoading(true);
+    setError(null);
+
+    const url = "http://127.0.0.1:8080/generate_report";
+    const data = {
+      date_of_test: "2024-06-11",
+      name: "Ameya Lambat",
+      date_of_birth: "2003-08-08",
+      snr_loss: "5 dB",
+      hs_right_thresholds: rightEarResults,
+      hs_left_thresholds: leftEarResults,
+    };
+
+    try {
+      const response = await axios.post(url, data);
+
+      if (response.status === 200) {
+        const result = response.data;
+        const pdfBase64 = result.pdf_base64;
+        const filename = result.filename;
+
+        const pdfUri = FileSystem.documentDirectory + filename;
+
+        // Save PDF to file
+        await FileSystem.writeAsStringAsync(pdfUri, pdfBase64, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        setPdfPath(pdfUri);
+        console.log("PDF saved to: ", pdfUri);
+      } else {
+        setError(`Error: ${response.status}`);
+      }
+    } catch (err) {
+      setError(`Error: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const calculate = (score: number) => {
     if (score < 25) {
       return "Pass";
@@ -19,8 +77,12 @@ export default function Screen() {
     }
   };
 
+  useEffect(() => {
+    generateReport();
+  }, []);
+
   return (
-    <SafeAreaView className="flex-1 items-center justify-start">
+    <SafeAreaView className="flex-1 items-center gap-y-4 justify-start">
       <View className="mt-20 w-4/5 rounded-3xl bg-blue-200 p-6 shadow-xl dark:bg-black">
         <View className="mb-6 self-center p-2">
           <Foundation
@@ -93,6 +155,51 @@ export default function Screen() {
           />
         </View>
       </View>
+      <TouchableOpacity
+        onPress={() => setShowPdf(true)}
+        disabled={loading || !pdfPath}
+        className={`py-3 px-6 rounded-xl ${
+          loading || !pdfPath ? "bg-gray-400" : "bg-blue-500"
+        }`}
+      >
+        <Text className="text-white text-center font-semibold">
+          {loading ? "Generating Report..." : "Open Report"}
+        </Text>
+      </TouchableOpacity>
+
+      {error && <Text className="mt-4 text-red-500">{error}</Text>}
+
+      <Modal
+        visible={showPdf}
+        presentationStyle="pageSheet"
+        animationType="slide"
+        onRequestClose={() => setShowPdf(false)}
+      >
+        <View className="flex-1 justify-center items-center gap-3 bg-white dark:bg-gray-900">
+          <TouchableOpacity
+            onPress={() => setShowPdf(false)}
+            className="bg-red-500 py-2 px-4 rounded mt-4"
+          >
+            <Text className="text-white text-center font-semibold">Close</Text>
+          </TouchableOpacity>
+          <Pdf
+            source={{ uri: pdfPath, cache: true }}
+            style={{ flex: 1, alignSelf: "stretch" }}
+            onLoadComplete={(numberOfPages, filePath) => {
+              console.log(`number of pages: ${numberOfPages}`);
+            }}
+            onPageChanged={(page, numberOfPages) => {
+              console.log(`current page: ${page}`);
+            }}
+            onError={(error) => {
+              console.error(error);
+            }}
+            onPressLink={(uri) => {
+              console.log(`Link pressed: ${uri}`);
+            }}
+          />
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
