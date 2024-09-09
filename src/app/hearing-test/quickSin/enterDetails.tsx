@@ -22,13 +22,18 @@ export default function Screen() {
   const router = useRouter();
   const [localName, setLocalName] = useState("");
   const [localBirthDate, setLocalBirthDate] = useState<Date | null>(null);
-  const { setName, setBirthDate } = useUserStore();
+  const { setName, setDateOfBirth, setDateOfTest, setTestConducted } =
+    useUserStore();
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
 
   const handleNext = () => {
     setName(localName);
-    setBirthDate(localBirthDate);
+    setDateOfBirth(
+      localBirthDate ? localBirthDate.toISOString().split("T")[0] : ""
+    );
+    setDateOfTest(new Date().toISOString().split("T")[0]);
+    setTestConducted("quickSin");
     router.push("/hearing-test/quickSin/noiseCheck");
   };
 

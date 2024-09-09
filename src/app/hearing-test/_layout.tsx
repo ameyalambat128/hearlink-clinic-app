@@ -33,6 +33,13 @@ export default function HearingTestLayout() {
         }}
       />
       <Stack.Screen
+        name="comprehensiveTest"
+        options={{
+          headerShown: false,
+          animation: "fade",
+        }}
+      />
+      <Stack.Screen
         name="hearingScreening"
         options={{
           headerShown: false,

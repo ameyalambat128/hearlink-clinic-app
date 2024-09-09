@@ -12,7 +12,7 @@ import * as FileSystem from "expo-file-system";
 import Pdf from "react-native-pdf";
 import axios from "axios";
 
-import { useHearingScreeningResultsStore } from "@/store/store";
+import { useHearingScreeningResultsStore, useUserStore } from "@/store/store";
 import { useEffect, useState } from "react";
 
 export default function Screen() {
@@ -22,6 +22,7 @@ export default function Screen() {
       rightEarResults: state.rightEarResults,
     })
   );
+  const { name, dateOfBirth, dateOfTest, snrLoss } = useUserStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,10 +41,10 @@ export default function Screen() {
 
     // TODO: Replace with actual data
     const data = {
-      date_of_test: "2024-06-11",
-      name: "Ameya Lambat",
-      date_of_birth: "2003-08-08",
-      snr_loss: "5 dB",
+      date_of_test: dateOfTest,
+      name: name,
+      date_of_birth: dateOfBirth,
+      snr_loss: snrLoss,
       hs_right_thresholds: rightEarResults,
       hs_left_thresholds: leftEarResults,
     };

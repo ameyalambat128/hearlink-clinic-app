@@ -35,19 +35,31 @@ export const useHearingScreeningResultsStore =
 // Hearing Test User Details Store
 type UserState = {
   name: string;
-  birthDate: Date | null;
+  dateOfBirth: string;
+  dateOfTest: string;
+  snrLoss: string;
   testConducted: string;
+  leftEarResults: Record<number, number>;
+  rightEarResults: Record<number, number>;
   setName: (name: string) => void;
-  setBirthDate: (birthDate: Date | null) => void;
+  setDateOfBirth: (dateOfBirth: string) => void;
+  setDateOfTest: (dateOfTest: string) => void;
+  setSnrLoss: (snrLoss: string) => void;
   setTestConducted: (testConducted: string) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
   name: "",
-  birthDate: null,
+  dateOfBirth: "",
+  dateOfTest: "",
+  snrLoss: "",
   testConducted: "",
+  leftEarResults: {},
+  rightEarResults: {},
   setName: (name: string) => set({ name }),
-  setBirthDate: (birthDate: Date | null) => set({ birthDate }),
+  setDateOfBirth: (dateOfBirth: string) => set({ dateOfBirth }),
+  setDateOfTest: (dateOfTest: string) => set({ dateOfTest }),
+  setSnrLoss: (snrLoss: string) => set({ snrLoss }),
   setTestConducted: (testConducted: string) => set({ testConducted }),
 }));
 

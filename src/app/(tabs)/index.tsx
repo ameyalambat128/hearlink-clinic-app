@@ -39,6 +39,14 @@ const tests: {
   },
   {
     id: "2",
+    name: "Comprehensive Test",
+    description:
+      "A comprehensive hearing test combines a range of assessments to evaluate the full extent of an individual's hearing abilities, including pure-tone audiometry, speech audiometry.",
+    link: "/hearing-test/comprehensiveTest",
+    image: require("../../../assets/images/hearingscreen-logo.png"),
+  },
+  {
+    id: "3",
     name: "Hearing Screening Test",
     description:
       "A hearing screening test is a quick and basic procedure used to identify individuals who may have hearing loss and require a more comprehensive auditory assessment.",
@@ -46,7 +54,7 @@ const tests: {
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
   {
-    id: "3",
+    id: "4",
     name: "Quick SIN Test",
     description:
       "The QuickSIN test is a rapid and effective assessment tool used in audiology to measure a person's ability to understand speech in noisy environments, helping to identify issues with speech discrimination.",
@@ -58,9 +66,11 @@ const tests: {
 
 export default function Hearing() {
   const router = useRouter();
-  const { name, birthDate } = useUserStore();
+  const { name, dateOfBirth, dateOfTest, testConducted } = useUserStore();
   console.log(name);
-  console.log(birthDate);
+  console.log(dateOfBirth);
+  console.log(dateOfTest);
+  console.log(testConducted);
 
   const nextPage = (href: any) => {
     router.push(href);

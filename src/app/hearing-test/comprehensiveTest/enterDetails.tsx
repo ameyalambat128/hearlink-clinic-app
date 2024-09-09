@@ -20,10 +20,11 @@ import { useUserStore } from "@/store/store";
 
 export default function Screen() {
   const router = useRouter();
-  const [localName, setLocalName] = useState("");
-  const [localBirthDate, setLocalBirthDate] = useState<Date | null>(null);
   const { setName, setDateOfBirth, setDateOfTest, setTestConducted } =
     useUserStore();
+
+  const [localName, setLocalName] = useState("");
+  const [localBirthDate, setLocalBirthDate] = useState<Date | null>(null);
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
 
@@ -41,8 +42,8 @@ export default function Screen() {
       localBirthDate ? localBirthDate.toISOString().split("T")[0] : ""
     );
     setDateOfTest(new Date().toISOString().split("T")[0]);
-    setTestConducted("hearingScreening");
-    router.push("/hearing-test/hearingScreening/noiseCheck");
+    setTestConducted("comprehensiveTest");
+    router.push("/hearing-test/comprehensiveTest/noiseCheck");
   };
 
   return (
