@@ -36,15 +36,19 @@ export const useHearingScreeningResultsStore =
 type UserState = {
   name: string;
   birthDate: Date | null;
+  testConducted: string;
   setName: (name: string) => void;
   setBirthDate: (birthDate: Date | null) => void;
+  setTestConducted: (testConducted: string) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
   name: "",
   birthDate: null,
+  testConducted: "",
   setName: (name: string) => set({ name }),
   setBirthDate: (birthDate: Date | null) => set({ birthDate }),
+  setTestConducted: (testConducted: string) => set({ testConducted }),
 }));
 
 // Questionnaire Store
