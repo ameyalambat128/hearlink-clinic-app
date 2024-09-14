@@ -10,9 +10,14 @@ import {
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 import Pdf from "react-native-pdf";
+import uuid from "react-native-uuid";
 import axios from "axios";
 
-import { useHearingScreeningResultsStore, useUserStore } from "@/store/store";
+import {
+  useHearingScreeningResultsStore,
+  useReportsStore,
+  useUserStore,
+} from "@/store/store";
 import { useEffect, useState } from "react";
 
 export default function Screen() {
@@ -23,6 +28,7 @@ export default function Screen() {
     })
   );
   const { name, dateOfBirth, dateOfTest, snrLoss } = useUserStore();
+  const { addReport } = useReportsStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,8 +70,17 @@ export default function Screen() {
           encoding: FileSystem.EncodingType.Base64,
         });
 
+        // Add the report to the ReportsStore
         setPdfPath(pdfUri);
-        console.log("PDF saved to: ", pdfUri);
+        const reportId = uuid.v4().toString();
+        const reportName = `${name} Report - ${new Date().toLocaleDateString()}`;
+        const report = {
+          id: reportId,
+          name: reportName,
+          date: new Date().toISOString(),
+          filePath: pdfUri,
+        };
+        addReport(report);
       } else {
         setError(`Error: ${response.status}`);
       }

@@ -63,6 +63,32 @@ export const useUserStore = create<UserState>((set) => ({
   setTestConducted: (testConducted: string) => set({ testConducted }),
 }));
 
+// Reports Store
+type Report = {
+  id: string;
+  name: string;
+  date: string;
+  filePath: string;
+};
+
+type ReportsStore = {
+  reports: Report[];
+  addReport: (report: Report) => void;
+  removeReport: (reportId: string) => void;
+};
+
+export const useReportsStore = create<ReportsStore>((set) => ({
+  reports: [],
+  addReport: (report: Report) => {
+    set((state) => ({ reports: [...state.reports, report] }));
+  },
+  removeReport: (reportId: string) => {
+    set((state) => ({
+      reports: state.reports.filter((report) => report.id !== reportId),
+    }));
+  },
+}));
+
 // Questionnaire Store
 type QuestionnaireStore = {
   responses: Record<string, string | Record<string, string | null>>;

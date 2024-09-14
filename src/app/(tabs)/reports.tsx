@@ -6,9 +6,13 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Modal,
 } from "react-native";
+import Pdf from "react-native-pdf";
+import * as FileSystem from "expo-file-system";
 
 import Page from "@/components/Page";
+import { useReportsStore } from "@/store/store";
 
 type SettingsItemProps = {
   name: string;
@@ -42,36 +46,61 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 };
 
 export default function ProfileScreen() {
+  const { reports } = useReportsStore();
+
   const [isAppleHealthEnabled, setIsAppleHealthEnabled] = useState(false);
+  const [showPdf, setShowPdf] = useState(false);
+  const [pdfPath, setPdfPath] = useState<string | null>(null);
+
+  const handleOpenReport = (filePath: string) => {
+    setPdfPath(filePath);
+    setShowPdf(true);
+  };
 
   return (
     <Page className="flex-1 items-center">
       <Text className="mt-4 text-xl font-bold">Hearing Reports</Text>
-      <SettingsItem
-        name="Jan 26: Test 3 QuickSIN"
-        onPress={() => {}}
-        group="start"
-      />
-      <SettingsItem
-        name="Jan 26: Test 2 Pure Tone"
-        onPress={() => {}}
-        group="middle"
-      />
-      <SettingsItem
-        name="Jan 26: Test Hearing Screen"
-        onPress={() => {}}
-        group="end"
-      />
-      <SettingsItem
-        name="Jan 25: Test 1 Hearing Screen"
-        onPress={() => {}}
-        group="none"
-      />
-      <SettingsItem
-        name="Jan 24: Test 1 Hearing Screen"
-        onPress={() => {}}
-        group="none"
-      />
+      {reports.map((report) => (
+        <SettingsItem
+          key={report.id}
+          name={report.name}
+          onPress={() => handleOpenReport(report.filePath)}
+          group="none"
+        />
+      ))}
+      <Modal
+        visible={showPdf}
+        presentationStyle="pageSheet"
+        animationType="slide"
+        onRequestClose={() => setShowPdf(false)}
+      >
+        <View className="flex-1 justify-center items-center gap-3 bg-white dark:bg-gray-900">
+          <TouchableOpacity
+            onPress={() => setShowPdf(false)}
+            className="bg-red-500 py-2 px-4 rounded mt-4"
+          >
+            <Text className="text-white text-center font-semibold">Close</Text>
+          </TouchableOpacity>
+          {pdfPath && (
+            <Pdf
+              source={{ uri: pdfPath, cache: true }}
+              style={{ flex: 1, alignSelf: "stretch" }}
+              onLoadComplete={(numberOfPages, filePath) => {
+                console.log(`number of pages: ${numberOfPages}`);
+              }}
+              onPageChanged={(page, numberOfPages) => {
+                console.log(`current page: ${page}`);
+              }}
+              onError={(error) => {
+                console.error(error);
+              }}
+              onPressLink={(uri) => {
+                console.log(`Link pressed: ${uri}`);
+              }}
+            />
+          )}
+        </View>
+      </Modal>
     </Page>
   );
 }
