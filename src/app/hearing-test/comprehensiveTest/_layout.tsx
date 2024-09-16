@@ -173,6 +173,7 @@ export default function Layout() {
             <TouchableOpacity
               onPress={() => {
                 router.dismissAll();
+                router.dismissAll();
               }}
             >
               <Ionicons

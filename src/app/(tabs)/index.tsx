@@ -29,38 +29,38 @@ const tests: {
   image?: number;
 }[] = [
   { id: "empty-left" },
+  // {
+  //   id: "1",
+  //   name: "CEDRA Questionnaire",
+  //   description:
+  //     "The CEDRA (Client Experience of Deafness Rating Assessment) questionnaire is a comprehensive tool designed to evaluate the unique experiences and challenges faced by individuals with hearing loss.",
+  //   link: "/hearing-test/questionnaire",
+  //   image: require("../../../assets/images/cedra-logo.png"),
+  // },
   {
     id: "1",
-    name: "CEDRA Questionnaire",
-    description:
-      "The CEDRA (Client Experience of Deafness Rating Assessment) questionnaire is a comprehensive tool designed to evaluate the unique experiences and challenges faced by individuals with hearing loss.",
-    link: "/hearing-test/questionnaire",
-    image: require("../../../assets/images/cedra-logo.png"),
-  },
-  {
-    id: "2",
     name: "Comprehensive Test",
     description:
       "A comprehensive hearing test combines a range of assessments to evaluate the full extent of an individual's hearing abilities, including pure-tone audiometry, speech audiometry.",
     link: "/hearing-test/comprehensiveTest",
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
-  {
-    id: "3",
-    name: "Hearing Screening Test",
-    description:
-      "A hearing screening test is a quick and basic procedure used to identify individuals who may have hearing loss and require a more comprehensive auditory assessment.",
-    link: "/hearing-test/hearingScreening",
-    image: require("../../../assets/images/hearingscreen-logo.png"),
-  },
-  {
-    id: "4",
-    name: "Quick SIN Test",
-    description:
-      "The QuickSIN test is a rapid and effective assessment tool used in audiology to measure a person's ability to understand speech in noisy environments, helping to identify issues with speech discrimination.",
-    link: "/hearing-test/quickSin",
-    image: require("../../../assets/images/quicksin-logo.png"),
-  },
+  // {
+  //   id: "3",
+  //   name: "Hearing Screening Test",
+  //   description:
+  //     "A hearing screening test is a quick and basic procedure used to identify individuals who may have hearing loss and require a more comprehensive auditory assessment.",
+  //   link: "/hearing-test/hearingScreening",
+  //   image: require("../../../assets/images/hearingscreen-logo.png"),
+  // },
+  // {
+  //   id: "4",
+  //   name: "Quick SIN Test",
+  //   description:
+  //     "The QuickSIN test is a rapid and effective assessment tool used in audiology to measure a person's ability to understand speech in noisy environments, helping to identify issues with speech discrimination.",
+  //   link: "/hearing-test/quickSin",
+  //   image: require("../../../assets/images/quicksin-logo.png"),
+  // },
   { id: "empty-right" },
 ];
 

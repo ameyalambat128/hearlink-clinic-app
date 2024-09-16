@@ -3,7 +3,7 @@
     "name": "Hearlink",
     "description": "Hearing Aid Reimagined",
     "slug": "hearlink",
-    "version": "0.1.11",
+    "version": "0.1.12",
     "orientation": "portrait",
     "icon": "./assets/images/hearlink-icon.png",
     "scheme": "myapp",
