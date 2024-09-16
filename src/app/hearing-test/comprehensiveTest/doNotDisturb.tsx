@@ -8,7 +8,7 @@ export default function Screen() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/practiceQuickSin");
+    router.push("/hearing-test/comprehensiveTest/practiceHearingScreening");
   };
 
   return (

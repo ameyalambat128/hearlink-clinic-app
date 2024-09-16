@@ -42,7 +42,7 @@ export default function Screen() {
   const trackNumberRef = useRef<string | null>(null);
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/practiceHearingScreening");
+    router.push("/hearing-test/comprehensiveTest/hearingScreeningResults");
   };
 
   const playSound = useCallback(async (soundToPlay: Audio.Sound) => {

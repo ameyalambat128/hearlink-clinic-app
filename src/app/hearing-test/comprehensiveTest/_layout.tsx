@@ -119,6 +119,22 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
+        name="practiceHearingScreening"
+        options={{
+          title: "Practice",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={30}
+                color={Colors[colorScheme ?? "light"].text}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen name="hearingScreeningTest" />
+      <Stack.Screen
         name="practiceQuickSin"
         options={{
           title: "Practice",
@@ -148,22 +164,6 @@ export default function Layout() {
           ),
         }}
       />
-      <Stack.Screen
-        name="practiceHearingScreening"
-        options={{
-          title: "Practice",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons
-                name="chevron-back-outline"
-                size={30}
-                color={Colors[colorScheme ?? "light"].text}
-              />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Stack.Screen name="hearingScreeningTest" />
       <Stack.Screen
         name="hearingScreeningResults"
         options={{
