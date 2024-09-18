@@ -319,7 +319,7 @@ export default function Screen() {
   const [results, setResults] = useState({ right: {}, left: {} });
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/practiceQuickSin");
+    router.push("/hearing-test/comprehensiveTest/hearingScreeningResults");
   };
 
   const playSound = useCallback(async (soundToPlay: Audio.Sound) => {

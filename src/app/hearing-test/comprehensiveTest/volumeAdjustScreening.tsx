@@ -1,40 +1,36 @@
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { Text, Image, SafeAreaView, View } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
-import { Video, ResizeMode } from "expo-av";
 
 export default function Screen() {
   const router = useRouter();
+  const [volume, setVolume] = useState(0);
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/practiceQuickSin");
+    router.push("/hearing-test/comprehensiveTest/practiceHearingScreening");
   };
 
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">
-            Turn on Do Not Disturb
-          </Text>
+          <Text className="pb-6 text-2xl font-bold">Adjust your Volume</Text>
+          {/* TODO: Description update here */}
           <Text className="text-md text-center font-medium">
-            To avoid interruptions, and to ensure the most accurate results,
-            turn on Do Not Disturb
+            Increase the volume to 100% using the slider below or the volume
+            buttons on your phone
           </Text>
         </View>
-        <View className="items-center">
-          <Video
-            source={require("../../../../assets/media/do-not-disturb.mp4")}
+        <View className="shadow-2xl">
+          <Image
+            source={require("../../../../assets/media/volumeAdjust.gif")} // Replace with your volume icon
+            resizeMode="contain"
             style={{
-              height: 480,
-              width: "100%",
-              borderRadius: 10,
+              width: 300,
+              height: 300,
             }}
-            isLooping={true}
-            shouldPlay={true}
-            isMuted={true}
-            resizeMode={ResizeMode.COVER}
           />
         </View>
         <View className="mb-4 flex items-center">
