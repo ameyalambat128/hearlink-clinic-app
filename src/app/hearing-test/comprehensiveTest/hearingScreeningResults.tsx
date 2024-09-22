@@ -92,7 +92,7 @@ export default function Screen() {
   };
 
   const calculate = (score: number) => {
-    if (score < 25) {
+    if (score == 25) {
       return "Pass";
     } else {
       return "Fail";

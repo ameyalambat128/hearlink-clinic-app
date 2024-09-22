@@ -1,6 +1,12 @@
 import { AVPlaybackStatus, Audio, InterruptionModeIOS } from "expo-av";
 import { Stack, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { SafeAreaView, TouchableOpacity, View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -8,7 +14,8 @@ import { usePauseStore, useHearingScreeningResultsStore } from "@/store/store";
 import Colors from "@/constants/Colors";
 
 const frequencies: number[] = [1000, 2000, 4000, 500];
-const INITIAL_INTENSITY: number = 30;
+const INITIAL_INTENSITY: number = 35;
+const SECOND_INTENSITY: number = 25;
 const TEST_INTENSITY_STEP_UP: number = 5;
 const TEST_INTENSITY_STEP_DOWN: number = 10;
 const INITIAL_INTENSITY_STEP_UP: number = 20;
@@ -313,9 +320,8 @@ export default function Screen() {
   const [currentFrequencyIndex, setCurrentFrequencyIndex] = useState<number>(0);
   const [currentIntensity, setCurrentIntensity] =
     useState<number>(INITIAL_INTENSITY);
-  const [isInitialPhase, setIsInitialPhase] = useState<boolean>(true);
-  const [lastResponseWasNo, setLastResponseWasNo] = useState<boolean>(false);
   const [currentEar, setCurrentEar] = useState<"right" | "left">("right");
+  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
   const [results, setResults] = useState({ right: {}, left: {} });
 
   const handleNext = () => {
@@ -372,52 +378,24 @@ export default function Screen() {
     [sound]
   );
 
-  const increaseIntensity = async () => {
-    const newIntensity = Math.min(
-      currentIntensity + TEST_INTENSITY_STEP_UP,
-      70
-    );
-    setCurrentIntensity(newIntensity);
-    await loadAndPlaySound(frequencies[currentFrequencyIndex], newIntensity);
-  };
-
   const decreaseIntensity = async () => {
     const newIntensity = Math.max(
       currentIntensity - TEST_INTENSITY_STEP_DOWN,
       0
     );
     setCurrentIntensity(newIntensity);
-    await loadAndPlaySound(frequencies[currentFrequencyIndex], newIntensity);
   };
 
   const handleYesPress = async () => {
-    if (isInitialPhase) {
-      setIsInitialPhase(false);
-      setLastResponseWasNo(false); // Resetting for test phase
-    } else {
-      if (lastResponseWasNo) {
-        console.log(
-          `${currentEar}: Test completed for ${frequencies[currentFrequencyIndex]} Hz, Final Intensity: ${currentIntensity} dB`
-        );
-        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
-        moveToNextFrequency();
-      } else {
-        await decreaseIntensity();
-      }
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
     }
-  };
-
-  const handleNoPress = async () => {
-    if (isInitialPhase) {
-      const newIntensity = Math.min(
-        currentIntensity + INITIAL_INTENSITY_STEP_UP,
-        MAX_INTENSITY
-      );
-      setCurrentIntensity(newIntensity);
-      await loadAndPlaySound(frequencies[currentFrequencyIndex], newIntensity);
+    if (currentIntensity === SECOND_INTENSITY) {
+      setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
+      moveToNextFrequency();
     } else {
-      await increaseIntensity();
-      setLastResponseWasNo(true);
+      decreaseIntensity();
     }
   };
 
@@ -439,21 +417,27 @@ export default function Screen() {
       return currentResults;
     });
     handleNext();
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
   };
 
   const moveToNextFrequency = () => {
     if (currentFrequencyIndex < frequencies.length - 1) {
+      setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
       setCurrentFrequencyIndex((prevIndex) => prevIndex + 1);
       setCurrentIntensity(INITIAL_INTENSITY);
-      setIsInitialPhase(true); // Reset to initial phase for the new frequency
     } else {
       if (currentEar === "right") {
-        setCurrentEar("left");
+        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
         setCurrentFrequencyIndex(0);
+        setCurrentEar("left");
+        console.log(currentFrequencyIndex);
         setCurrentIntensity(INITIAL_INTENSITY);
-        setIsInitialPhase(true);
       } else {
         // Test is complete for both ears
+        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
         finishTest();
       }
     }
@@ -464,27 +448,28 @@ export default function Screen() {
     router.push("/(modals)/pause-modal");
   };
 
-  // On Component Mount Sound Loading
-  // useEffect(() => {
-  //   loadAndPlaySound(frequencies[currentFrequencyIndex], INITIAL_INTENSITY);
-  // }, []);
-
-  // Initial Phase Sound Loading
-  useEffect(() => {
-    loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
-  }, [currentFrequencyIndex, currentIntensity]);
-
   // Test phase sound loading
   useEffect(() => {
-    if (!isInitialPhase) {
-      loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
-      console.log(
-        `Test phase has begun for ${frequencies[currentFrequencyIndex]} Hz`
-      );
-    } else {
-      loadAndPlaySound(frequencies[currentFrequencyIndex], INITIAL_INTENSITY);
-    }
-  }, [isInitialPhase, currentFrequencyIndex, currentIntensity]);
+    loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
+    console.log(
+      `Test phase has begun for ${currentEar}: ${frequencies[currentFrequencyIndex]} Hz`
+    );
+  }, [currentFrequencyIndex, currentIntensity]);
+
+  // Timeout for no response
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      moveToNextFrequency();
+    }, 5000); // 5 seconds
+
+    timeoutIdRef.current = timeout;
+
+    return () => {
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
+      }
+    };
+  }, [currentFrequencyIndex, currentIntensity, currentEar]);
 
   // Sound Pausing
   useEffect(() => {
@@ -533,24 +518,23 @@ export default function Screen() {
             Hearing Screening Test
           </Text>
           <Text className="text-md text-center font-medium">
-            Whenever you hear a beep, no matter how faint, please press yes but
-            if you don't hear a beep for over 5 seconds, press no.
+            Whenever you hear a beep, no matter how faint, please press yes.
           </Text>
         </View>
 
         <View className="">
           <TouchableOpacity
-            className="items-center justify-center rounded-full bg-blue-200 p-4 mb-8"
+            className="items-center justify-center rounded-full bg-blue-200 p-36 mb-8"
             onPress={handleYesPress}
           >
             <Text className="text-base font-medium text-blue-800">Yes</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             className="items-center justify-center rounded-full bg-red-200 p-4"
             onPress={handleNoPress}
           >
             <Text className="text-base font-medium text-red-800">No</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <View className="mb-4 flex items-center"></View>

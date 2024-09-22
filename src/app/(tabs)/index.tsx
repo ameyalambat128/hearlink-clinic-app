@@ -42,7 +42,7 @@ const tests: {
     name: "Comprehensive Test",
     description:
       "A comprehensive hearing test combines a range of assessments to evaluate the full extent of an individual's hearing abilities, including pure-tone audiometry, speech audiometry.",
-    link: "/hearing-test/comprehensiveTest",
+    link: "/hearing-test/comprehensiveTest/hearingScreeningTest",
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
   // {
