@@ -1,8 +1,15 @@
-# Expo Router and Tailwind CSS
+# Hearlink
 
-Use [Expo Router](https://docs.expo.dev/router/introduction/) with [Nativewind](https://www.nativewind.dev/v4/overview/) styling.
+Hearing Aid Reimagined
 
-## 🚀 How to use
+### Tech Stack
+
+- React Native
+- Expo
+- Nativewind
+- Zustand
+
+### Created Using
 
 ```sh
 npx create-expo-app -e with-router-tailwind
