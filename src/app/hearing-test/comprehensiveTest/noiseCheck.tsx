@@ -120,8 +120,8 @@ export default function Screen() {
       />
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">Find a quiet place</Text>
-          <Text className="text-md text-center font-medium">
+          <Text className="pb-6 text-3xl font-bold">Find a quiet place</Text>
+          <Text className="text-xl text-center font-medium">
             The hearing test is most accurate when done in silence
           </Text>
         </View>

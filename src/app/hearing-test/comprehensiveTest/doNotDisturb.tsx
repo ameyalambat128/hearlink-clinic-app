@@ -8,17 +8,17 @@ export default function Screen() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/practiceQuickSin");
+    router.push("/hearing-test/comprehensiveTest/quickSinTest");
   };
 
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">
+          <Text className="pb-6 text-3xl font-bold">
             Turn on Do Not Disturb
           </Text>
-          <Text className="text-md text-center font-medium">
+          <Text className="text-xl text-center font-medium">
             To avoid interruptions, and to ensure the most accurate results,
             turn on Do Not Disturb
           </Text>

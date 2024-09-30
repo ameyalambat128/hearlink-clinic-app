@@ -34,10 +34,10 @@ export default function Screen() {
     <SafeAreaView className="flex h-full items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">
+          <Text className="pb-6 text-3xl font-bold">
             Connect Your Headphones
           </Text>
-          <Text className="text-md text-center font-medium">
+          <Text className="text-xl text-center font-medium">
             Remember to turn on noise cancellation
           </Text>
         </View>
@@ -54,7 +54,7 @@ export default function Screen() {
               source={require("../../../../assets/images/airpods-pro.png")}
               style={{ width: 50, height: 50, borderRadius: 10 }}
             />
-            <Text className="ml-4 text-lg font-semibold">Airpods Pro</Text>
+            <Text className="ml-4 text-lg font-semibold">Airpods Pro 2</Text>
           </TouchableOpacity>
           <TouchableOpacity
             className={`flex flex-row items-center rounded-xl border-2  bg-gray-200 p-4 ${

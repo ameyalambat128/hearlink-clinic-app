@@ -88,9 +88,9 @@ export default function Screen() {
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">Adjust your Volume</Text>
+          <Text className="pb-6 text-3xl font-bold">Adjust your Volume</Text>
           {/* TODO: Description update here */}
-          <Text className="text-md text-center font-medium">
+          <Text className="text-xl text-center font-medium">
             Play the audio below and adjust the volume to a level that it's
             "Loud, but Ok"
           </Text>

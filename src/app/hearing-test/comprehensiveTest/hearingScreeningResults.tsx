@@ -39,13 +39,15 @@ export default function Screen() {
     setLoading(true);
     setError(null);
 
-    const baseUrl =
-      "https://of86h4ca0j.execute-api.us-east-1.amazonaws.com/dev";
+    const _PROD = true;
+    const baseUrl = _PROD
+      ? "https://3hqdiebt0j.execute-api.us-east-1.amazonaws.com/dev"
+      : "http://127.0.0.1:8080";
+
     const endpoint =
       "/generate_report?api_key=140d9c95c96f67d56db446ac22ce10cf";
     const url = `${baseUrl}${endpoint}`;
 
-    // TODO: Replace with actual data
     const data = {
       date_of_test: dateOfTest,
       name: name,
@@ -57,6 +59,7 @@ export default function Screen() {
 
     try {
       const response = await axios.post(url, data);
+      console.log("data", data);
 
       if (response.status === 200) {
         const result = response.data;
