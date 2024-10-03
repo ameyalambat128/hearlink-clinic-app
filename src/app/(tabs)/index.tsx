@@ -39,9 +39,9 @@ const tests: {
   // },
   {
     id: "1",
-    name: "Comprehensive Test",
+    name: "Hearing Screening Test",
     description:
-      "A comprehensive hearing test combines a range of assessments to evaluate the full extent of an individual's hearing abilities, including pure-tone audiometry, speech audiometry.",
+      "Easily screen your hearing with key tones at different frequencies and assess your ability to hear speech in noise using the QuickSIN test. Get instant results to help determine if you need a more detailed hearing test.",
     link: "/hearing-test/comprehensiveTest/",
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },

@@ -50,8 +50,8 @@ export default function Screen() {
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">Enter your details</Text>
-          <Text className="text-md text-center font-medium">
+          <Text className="pb-6 text-3xl font-bold">Enter your details</Text>
+          <Text className="text-xl text-center font-medium">
             This information will be used to create reports for your results.
           </Text>
         </View>

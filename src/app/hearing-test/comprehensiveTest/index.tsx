@@ -14,12 +14,14 @@ export default function Screen() {
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">Comprehensive Test</Text>
-          <Text className="text-md text-center font-medium">
-            This test determines the quietest sounds a person can hear at
-            different pitches and measures the person's ability to understand
-            speech in noisy environments, helping to identify issues with speech
-            discrimination.
+          <Text className="pb-6 text-3xl font-bold">
+            Hearing Screening Test
+          </Text>
+          <Text className="text-xl text-center font-medium">
+            Easily screen your hearing with key tones at different frequencies
+            and assess your ability to hear speech in noise using the QuickSIN
+            test. Get instant results to help determine if you need a more
+            detailed hearing test.
           </Text>
         </View>
         <View className="items-center">

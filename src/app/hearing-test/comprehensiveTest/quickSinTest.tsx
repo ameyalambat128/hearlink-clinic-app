@@ -42,6 +42,7 @@ export default function Screen() {
   const trackNumberRef = useRef<string | null>(null);
 
   const handleNext = () => {
+    // stopRecognizing();
     router.push("/hearing-test/comprehensiveTest/volumeAdjustScreening");
   };
 
@@ -112,7 +113,7 @@ export default function Screen() {
     const trackId = trackNumberRef.current;
 
     const sentenceCount = 6;
-    let result: { [key: number]: number } = {};
+    // let result: { [key: number]: number } = {};
 
     for (let i = 1; i <= sentenceCount; i++) {
       const keywordsList = extractKeywords(trackId, i);
@@ -245,19 +246,19 @@ export default function Screen() {
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">Quick SIN Test</Text>
+          <Text className="pb-6 text-3xl font-bold">Quick SIN Test</Text>
           {/* TODO: Description update here */}
-          <Text className="text-md text-center font-medium">
+          <Text className="text-xl text-center font-medium">
             After hearing each sentence, repeat it back immediately. Remember,
             the noise level will change, so some parts might be easier or harder
             to hear
           </Text>
-          <ExternalLink
+          {/* <ExternalLink
             className="mt-3 text-blue-500 underline"
             href="https://www.youtube.com/watch?v=CaK6UP0W-9o"
           >
             What is SNR loss?
-          </ExternalLink>
+          </ExternalLink> */}
         </View>
         <View className="flex items-center">
           {isPlaying ? (

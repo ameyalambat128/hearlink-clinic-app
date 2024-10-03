@@ -9,16 +9,16 @@ export default function Screen() {
   const [volume, setVolume] = useState(0);
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/practiceHearingScreening");
+    router.push("/hearing-test/comprehensiveTest/hearingScreeningTest");
   };
 
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
         <View className="flex items-center pt-8">
-          <Text className="pb-6 text-2xl font-bold">Adjust your Volume</Text>
+          <Text className="pb-6 text-3xl font-bold">Adjust your Volume</Text>
           {/* TODO: Description update here */}
-          <Text className="text-md text-center font-medium">
+          <Text className="text-xl text-center font-medium">
             Increase the volume to 100% using the slider below or the volume
             buttons on your phone
           </Text>
