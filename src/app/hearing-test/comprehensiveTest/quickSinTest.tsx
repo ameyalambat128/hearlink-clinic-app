@@ -42,6 +42,7 @@ export default function Screen() {
   const trackNumberRef = useRef<string | null>(null);
 
   const handleNext = () => {
+    // stopRecognizing();
     router.push("/hearing-test/comprehensiveTest/volumeAdjustScreening");
   };
 
@@ -112,7 +113,7 @@ export default function Screen() {
     const trackId = trackNumberRef.current;
 
     const sentenceCount = 6;
-    let result: { [key: number]: number } = {};
+    // let result: { [key: number]: number } = {};
 
     for (let i = 1; i <= sentenceCount; i++) {
       const keywordsList = extractKeywords(trackId, i);

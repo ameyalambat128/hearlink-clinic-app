@@ -5,7 +5,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Linking,
   Modal,
 } from "react-native";
 import * as FileSystem from "expo-file-system";
@@ -31,13 +30,12 @@ export default function Screen() {
   const { addReport } = useReportsStore();
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
   const [pdfPath, setPdfPath] = useState<string | null>(null);
   const [showPdf, setShowPdf] = useState(false);
 
   const generateReport = async () => {
     setLoading(true);
-    setError(null);
 
     const _PROD = true;
     const baseUrl = _PROD
@@ -51,15 +49,15 @@ export default function Screen() {
     const data = {
       date_of_test: dateOfTest,
       name: name,
-      date_of_birth: dateOfBirth,
       snr_loss: snrLoss,
+      date_of_birth: dateOfBirth,
       hs_right_thresholds: rightEarResults,
       hs_left_thresholds: leftEarResults,
     };
 
     try {
+      console.log("data:", data, url);
       const response = await axios.post(url, data);
-      console.log("data", data);
 
       if (response.status === 200) {
         const result = response.data;
@@ -85,10 +83,10 @@ export default function Screen() {
         };
         addReport(report);
       } else {
-        setError(`Error: ${response.status}`);
+        console.log(`Error: ${response.status}`);
       }
     } catch (err) {
-      setError(`Error: ${err.message}`);
+      console.log(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -191,8 +189,6 @@ export default function Screen() {
           {loading ? "Generating Report..." : "Open Report"}
         </Text>
       </TouchableOpacity>
-
-      {error && <Text className="mt-4 text-red-500">{error}</Text>}
 
       <Modal
         visible={showPdf}
