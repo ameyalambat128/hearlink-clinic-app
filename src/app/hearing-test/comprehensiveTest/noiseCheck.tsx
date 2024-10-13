@@ -29,7 +29,7 @@ export default function Screen() {
   const handleNext = async () => {
     await stopRecording();
     recordingRef.current = null;
-    router.push("/hearing-test/comprehensiveTest/chooseHeadphones");
+    router.push("/hearing-test/comprehensiveTest/connectAirpodsPro");
   };
 
   const startRecording = async () => {

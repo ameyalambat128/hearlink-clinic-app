@@ -12,7 +12,7 @@ function SetUpButton({
 }) {
   return (
     <TouchableOpacity
-      className={`w-full items-center justify-center rounded-2xl px-6 py-4 ${
+      className={`w-full items-center justify-center rounded-2xl px-6 py-4 lg:py-10 ${
         disabled ? "bg-gray-200" : "bg-blue-200"
       } text-gray-400`}
       onPress={handlePress}

@@ -55,7 +55,7 @@ export default function Screen() {
             This information will be used to create reports for your results.
           </Text>
         </View>
-        <View className="gap-10 h-72">
+        <View className="gap-10 lg:gap-20 h-72">
           {/* Name Input */}
           <View className="flex-row items-center mt-2 bg-gray-100 h-16 border border-gray-300 rounded-full px-4">
             <Feather name="user" size={20} className="mr-2" />

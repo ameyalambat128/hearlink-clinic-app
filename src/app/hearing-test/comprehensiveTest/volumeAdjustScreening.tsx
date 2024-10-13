@@ -1,8 +1,10 @@
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text, Image, SafeAreaView, View } from "react-native";
+import { Text, Image, SafeAreaView, View, Platform } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
+
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 
 export default function Screen() {
   const router = useRouter();
@@ -23,13 +25,13 @@ export default function Screen() {
             buttons on your phone
           </Text>
         </View>
-        <View className="shadow-2xl">
+        <View className="flex items-center shadow-2xl">
           <Image
-            source={require("../../../../assets/media/volumeAdjust.gif")} // Replace with your volume icon
+            source={require("../../../../assets/media/volumeAdjustQ.gif")} // Replace with your volume icon
             resizeMode="contain"
             style={{
-              width: 300,
-              height: 300,
+              width: 300 * (isPad ? 2 : 1),
+              height: 300 * (isPad ? 2 : 1),
             }}
           />
         </View>

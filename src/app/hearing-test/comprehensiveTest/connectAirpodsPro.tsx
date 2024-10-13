@@ -1,9 +1,11 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { SafeAreaView, View, Text } from "react-native";
+import { SafeAreaView, View, Text, Platform } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
 import { Video } from "expo-av";
+
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 
 export default function Screen() {
   const router = useRouter();
@@ -26,7 +28,7 @@ export default function Screen() {
           <Video
             source={require("../../../../assets/media/airpods-p.mp4")}
             style={{
-              height: 520,
+              height: 520 * (isPad ? 1.8 : 1),
               width: "100%",
             }}
             isLooping={true}

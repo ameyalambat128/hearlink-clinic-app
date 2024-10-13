@@ -1,8 +1,10 @@
 import { useRouter } from "expo-router";
-import { Text, Image, SafeAreaView, View } from "react-native";
+import { Text, Image, SafeAreaView, View, Platform } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
 import { Video, ResizeMode } from "expo-av";
+
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 
 export default function Screen() {
   const router = useRouter();
@@ -27,8 +29,8 @@ export default function Screen() {
           <Video
             source={require("../../../../assets/media/do-not-disturb.mp4")}
             style={{
-              height: 480,
-              width: "100%",
+              height: 480 * (isPad ? 2 : 1),
+              width: isPad ? "80%" : "100%",
               borderRadius: 10,
             }}
             isLooping={true}

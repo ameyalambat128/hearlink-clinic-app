@@ -69,10 +69,6 @@ const tests: {
 export default function Hearing() {
   const router = useRouter();
   const { name, dateOfBirth, dateOfTest, testConducted } = useUserStore();
-  console.log(name);
-  console.log(dateOfBirth);
-  console.log(dateOfTest);
-  console.log(testConducted);
 
   const nextPage = (href: any) => {
     router.push(href);

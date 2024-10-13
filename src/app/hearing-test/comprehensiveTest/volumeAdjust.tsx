@@ -8,9 +8,12 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Platform,
 } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
+
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 
 export default function Screen() {
   const router = useRouter();
@@ -98,31 +101,39 @@ export default function Screen() {
         <View className="flex items-center">
           {isPlaying ? (
             <View className="items-center">
-              <Text className="font-bold italic">
+              <Text className="font-bold italic lg:text-2xl">
                 Adjust the volume using the side buttons
               </Text>
               <TouchableOpacity onPress={() => sound?.pauseAsync()}>
-                <Ionicons name="pause" size={50} color="black" />
+                <Ionicons
+                  name="pause"
+                  size={50 * (isPad ? 1.5 : 1)}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
           ) : (
             <View className="items-center">
-              <Text className="font-bold italic">
+              <Text className="font-bold italic lg:text-2xl">
                 Click the button below to play
               </Text>
               <TouchableOpacity onPress={loadAndPlaySound}>
-                <Ionicons name="play" size={50} color="black" />
+                <Ionicons
+                  name="play"
+                  size={50 * (isPad ? 1.5 : 1)}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
           )}
         </View>
-        <View className="shadow-2xl">
+        <View className="flex items-center shadow-2xl">
           <Image
             source={require("../../../../assets/media/volumeAdjustQ.gif")} // Replace with your volume icon
             resizeMode="contain"
             style={{
-              width: 300,
-              height: 300,
+              width: 300 * (isPad ? 2 : 1),
+              height: 300 * (isPad ? 2 : 1),
             }}
           />
         </View>
