@@ -106,7 +106,7 @@ export default function Screen() {
 
   return (
     <SafeAreaView className="flex-1 items-center gap-y-4 justify-start">
-      <View className="mt-20 w-4/5 rounded-3xl bg-blue-200 p-6 shadow-xl dark:bg-black">
+      <View className="mt-20 lg:mt-40 w-4/5 rounded-3xl bg-blue-200 p-6 shadow-xl dark:bg-black">
         <View className="mb-6 self-center p-2">
           <Foundation
             name="results"
@@ -115,8 +115,12 @@ export default function Screen() {
           />
         </View>
         <View className="flex items-center">
-          <Text className="mb-6 text-center text-2xl font-bold">Results</Text>
-          <Text className="mb-4 text-center text-2xl font-bold">Right Ear</Text>
+          <Text className="mb-6 text-center text-2xl lg:text-5xl font-bold">
+            Results
+          </Text>
+          <Text className="mb-4 text-center text-2xl lg:text-4xl font-bold">
+            Right Ear
+          </Text>
           <FlatList
             data={Object.keys(rightEarResults)}
             className=""
@@ -146,7 +150,9 @@ export default function Screen() {
               </View>
             )}
           />
-          <Text className="my-4 text-center text-2xl font-bold">Left Ear</Text>
+          <Text className="my-4 text-center text-2xl lg:text-4xl font-bold">
+            Left Ear
+          </Text>
           <FlatList
             data={Object.keys(leftEarResults)}
             className=""
@@ -192,7 +198,7 @@ export default function Screen() {
 
       <Modal
         visible={showPdf}
-        presentationStyle="pageSheet"
+        presentationStyle="fullScreen"
         animationType="slide"
         onRequestClose={() => setShowPdf(false)}
       >

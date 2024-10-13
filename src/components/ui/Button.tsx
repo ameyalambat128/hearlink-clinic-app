@@ -19,7 +19,7 @@ function SetUpButton({
       disabled={disabled}
     >
       <Text
-        className={`text-base font-medium ${
+        className={`text-base font-medium lg:text-3xl ${
           disabled ? "text-gray-800" : "text-blue-800"
         }`}
       >

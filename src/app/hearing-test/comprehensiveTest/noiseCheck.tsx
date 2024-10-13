@@ -119,9 +119,11 @@ export default function Screen() {
         }}
       />
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8">
-          <Text className="pb-6 text-3xl font-bold">Find a quiet place</Text>
-          <Text className="text-xl text-center font-medium">
+        <View className="flex items-center pt-8 lg:pt-10">
+          <Text className="pb-6 text-3xl lg:text-5xl font-bold">
+            Find a quiet place
+          </Text>
+          <Text className="text-xl lg:text-3xl text-center font-medium">
             The hearing test is most accurate when done in silence
           </Text>
         </View>

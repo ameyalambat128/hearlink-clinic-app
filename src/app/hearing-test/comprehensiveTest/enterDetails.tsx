@@ -49,15 +49,17 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8">
-          <Text className="pb-6 text-3xl font-bold">Enter your details</Text>
-          <Text className="text-xl text-center font-medium">
+        <View className="flex items-center pt-8 lg:pt-10">
+          <Text className="pb-6 text-3xl lg:text-5xl font-bold">
+            Enter your details
+          </Text>
+          <Text className="text-xl lg:text-3xl text-center font-medium">
             This information will be used to create reports for your results.
           </Text>
         </View>
         <View className="gap-10 lg:gap-20 h-72">
           {/* Name Input */}
-          <View className="flex-row items-center mt-2 bg-gray-100 h-16 border border-gray-300 rounded-full px-4">
+          <View className="flex-row items-center mt-2 bg-gray-100 h-16 lg:h-24 border border-gray-300 rounded-full px-4 lg:px-8">
             <Feather name="user" size={20} className="mr-2" />
             <TextInput
               placeholder="Enter your name"
@@ -68,7 +70,7 @@ export default function Screen() {
           </View>
           {/* Birth Date Picker */}
           <TouchableOpacity
-            className="flex-row items-center mt-2 bg-gray-100 h-16 border border-gray-300 rounded-full px-4"
+            className="flex-row items-center mt-2 bg-gray-100 h-16 lg:h-24 border border-gray-300 rounded-full px-4 lg:px-8"
             onPress={() => {
               setIsDatePickerVisible(true);
             }}

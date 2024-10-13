@@ -2,7 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { AVPlaybackStatus, Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Text, SafeAreaView, TouchableOpacity, View } from "react-native";
+import {
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+  Platform,
+} from "react-native";
 import Voice from "@react-native-voice/voice";
 
 import ExternalLink from "@/components/ExternalLink";
@@ -25,6 +31,107 @@ const audioFilePaths = {
   14: require("../../../../assets/audio/quicksin/track_14.mp3"),
 };
 
+const trackTimings = {
+  3: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  4: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  5: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_6: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_7: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_8: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_9: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_10: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_11: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_12: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_13: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+  track_14: {
+    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
+    "2": [15, 22],
+    "3": [25, 30],
+    "4": [33, 39],
+    "5": [42, 48],
+    "6": [52, 58],
+  },
+};
+
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
+
 export default function Screen() {
   const router = useRouter();
   const { setSnrLoss } = useUserStore();
@@ -35,11 +142,28 @@ export default function Screen() {
   const [recordings, setRecordings] = useState<string[]>([]);
   const recordingRef = useRef<Audio.Recording | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [result, setResult] = useState<Record<string, number>>({});
+  const [result, setResult] = useState<Record<string, number>>({
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+  });
+  const [finalResults, setFinalResults] = useState<Record<string, number>>({
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+  });
+  const [resultCount, setResultCount] = useState<number>(0);
   const [score, setScore] = useState<number | null>(null);
-  const [started, setStarted] = useState<boolean>(false);
+
   const [finished, setFinished] = useState<boolean>(false);
   const trackNumberRef = useRef<string | null>(null);
+  const currentSentenceRef = useRef<string | null>(null);
 
   const handleNext = () => {
     // stopRecognizing();
@@ -81,6 +205,7 @@ export default function Screen() {
   useEffect(() => {
     Voice.onSpeechStart = onSpeechStart;
     Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechEnd = onSpeechEnd;
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
@@ -89,6 +214,10 @@ export default function Screen() {
 
   const onSpeechStart = (e: any) => {
     console.log("onSpeechStart: ", e);
+  };
+
+  const onSpeechEnd = () => {
+    console.log("Speech recognition ended");
   };
 
   /*
@@ -100,36 +229,43 @@ export default function Screen() {
    * Somehow need to add markers whenever a sentence is completed or
    * somehow add punctuation to the transcription
    */
+  const sentenceRefs = useRef<Record<string, number>>({
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+  });
   const onSpeechResults = (e: any) => {
     const transcription = e.value;
     console.log("Transcription:", transcription);
 
-    // Step 1: Separate words in the transcription
+    // Separate words in the transcription
     const words = transcription[0].toLowerCase().split(/\s+/);
     console.log("Words:", words);
 
-    // Step 2: Grade the transcription
-    console.log("Track ID:", trackNumberRef.current);
     const trackId = trackNumberRef.current;
+    const currentSentence = currentSentenceRef.current; // Use current sentence ID
 
-    const sentenceCount = 6;
-    // let result: { [key: number]: number } = {};
+    // Get the keywords for the current sentence
+    const keywordsList = extractKeywords(trackId, parseInt(currentSentence));
+    let correctCount = 0;
 
-    for (let i = 1; i <= sentenceCount; i++) {
-      const keywordsList = extractKeywords(trackId, i);
-      let count = 0;
-      keywordsList.forEach((keyword: string) => {
-        if (words.includes(keyword.toLowerCase())) {
-          count++;
-        }
-      });
-      result[i] = count;
-    }
+    keywordsList.forEach((keyword: string) => {
+      if (words.includes(keyword.toLowerCase())) {
+        correctCount++;
+      }
+    });
 
-    console.log("Result:", result);
+    // Update the sentence result in the ref
+    sentenceRefs.current[currentSentence] = correctCount;
+    console.log(`Sentence ${currentSentence} result stored:`, correctCount);
+  };
 
-    const totalScore = Object.values(result).reduce(
-      (total, score) => total + score,
+  const calculateSNRLoss = () => {
+    const totalScore = Object.values(sentenceRefs.current).reduce(
+      (acc, score) => acc + score,
       0
     );
     const snrLoss = 25.5 - totalScore;
@@ -141,7 +277,6 @@ export default function Screen() {
   const startRecognizing = async () => {
     try {
       await Voice.start("en-US");
-      setStarted(true);
     } catch (e) {
       console.error(e);
     }
@@ -150,34 +285,10 @@ export default function Screen() {
   const stopRecognizing = async () => {
     try {
       await Voice.stop();
-      setStarted(false);
       setFinished(true);
+      console.log("Result State:", result);
     } catch (e) {
       console.error(e);
-    }
-  };
-
-  const stopRecording = async () => {
-    const currentRecording = recordingRef.current;
-    if (!currentRecording) return;
-    console.log("Stopping recording:", recording);
-    try {
-      await currentRecording.stopAndUnloadAsync();
-      Voice.onSpeechResults = onSpeechResults;
-      setRecording(null);
-    } catch (error) {
-      console.error("Error stopping recording:", error);
-    }
-  };
-
-  const playRecording = async (uri: string) => {
-    try {
-      const { sound: playbackSound } = await Audio.Sound.createAsync({
-        uri,
-      });
-      playSound(playbackSound);
-    } catch (error) {
-      console.error("Error playing recording:", error);
     }
   };
 
@@ -194,7 +305,8 @@ export default function Screen() {
 
       const trackKeys = Object.keys(audioFilePaths);
       const randomIndex = Math.floor(Math.random() * trackKeys.length);
-      const randomTrackNumber = trackKeys[randomIndex];
+      // const randomTrackNumber = trackKeys[randomIndex];
+      const randomTrackNumber = "3";
 
       // @ts-ignore
       const audioFile = audioFilePaths[randomTrackNumber];
@@ -206,9 +318,9 @@ export default function Screen() {
         undefined,
         onPlaybackStatusUpdate
       );
+      trackNumberRef.current = randomTrackNumber;
       setSound(newSound);
       playSound(newSound);
-      trackNumberRef.current = randomTrackNumber;
       await startRecognizing();
     } catch (error) {
       console.error("Error loading sound:", error);
@@ -217,19 +329,46 @@ export default function Screen() {
 
   const onPlaybackStatusUpdate = useCallback(
     async (newStatus: AVPlaybackStatus) => {
-      setStatus(newStatus);
       if (newStatus.isLoaded) {
-        setIsPlaying(newStatus.isPlaying);
-        if (newStatus.didJustFinish && !newStatus.isLooping) {
-          // Sound has finished playing, stop recording
-          console.log("Sound finished playing");
-          Voice.onSpeechResults = onSpeechResults;
-          await stopRecognizing();
-          // await stopRecording();
+        const currentTime = Math.floor(newStatus.positionMillis * 0.001); // Convert to seconds
+        const trackId = trackNumberRef.current;
+
+        if (trackId && trackTimings[trackId]) {
+          const sentences = trackTimings[trackId];
+
+          Object.keys(sentences).forEach(async (sentenceId) => {
+            const [start, end] = sentences[sentenceId];
+
+            console.log(
+              `Checking sentence ${sentenceId}: currentTime = ${currentTime}, start = ${start}, end = ${end}`
+            );
+
+            // Sentence is currently playing, transcription should start
+            if (currentTime >= start && currentTime < end) {
+              currentSentenceRef.current = sentenceId; // Update the current sentence reference
+              console.log(`Starting transcription for sentence ${sentenceId}`);
+              await startRecognizing(); // Start speech recognition
+            }
+
+            // Sentence has finished playing, transcription should stop
+            if (currentTime >= end) {
+              console.log(`Stopping transcription for sentence ${sentenceId}`);
+
+              // If this is the last sentence, calculate the SNR loss
+              if (newStatus.didJustFinish && !newStatus.isLooping) {
+                console.log(sentenceRefs.current);
+
+                await stopRecognizing();
+                calculateSNRLoss();
+              }
+            }
+          });
         }
+
+        setIsPlaying(newStatus.isPlaying); // Update playback status
       }
     },
-    [stopRecognizing]
+    [stopRecognizing, startRecognizing]
   );
 
   // Sound Unloading
@@ -245,10 +384,12 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8">
-          <Text className="pb-6 text-3xl font-bold">Quick SIN Test</Text>
+        <View className="flex items-center pt-8 lg:pt-10">
+          <Text className="pb-6 text-3xl lg:text-5xl font-bold">
+            Quick SIN Test
+          </Text>
           {/* TODO: Description update here */}
-          <Text className="text-xl text-center font-medium">
+          <Text className="text-xl lg:text-3xl text-center font-medium">
             After hearing each sentence, repeat it back immediately. Remember,
             the noise level will change, so some parts might be easier or harder
             to hear
@@ -270,11 +411,15 @@ export default function Screen() {
             </View>
           ) : (
             <View className="items-center">
-              <Text className="font-bold italic">
+              <Text className="font-bold italic lg:text-2xl">
                 Click the button below to play
               </Text>
               <TouchableOpacity onPress={loadAndPlaySound}>
-                <Ionicons name="play" size={50} color="black" />
+                <Ionicons
+                  name="play"
+                  size={50 * (isPad ? 2 : 1)}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
           )}
