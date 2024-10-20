@@ -13,11 +13,11 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8">
-          <Text className="pb-6 text-3xl font-bold">
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
             Hearing Screening Test
           </Text>
-          <Text className="text-xl text-center font-medium">
+          <Text className="text-xl md:text-2xl text-center font-medium">
             Easily screen your hearing with key tones at different frequencies
             and assess your ability to hear speech in noise using the QuickSIN
             test. Get instant results to help determine if you need a more

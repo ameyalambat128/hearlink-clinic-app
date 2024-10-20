@@ -1,8 +1,10 @@
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text, Image, SafeAreaView, View } from "react-native";
+import { Text, Image, SafeAreaView, View, Platform } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
+
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 
 export default function Screen() {
   const router = useRouter();
@@ -15,21 +17,23 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8">
-          <Text className="pb-6 text-3xl font-bold">Adjust your Volume</Text>
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
+            Adjust your Volume
+          </Text>
           {/* TODO: Description update here */}
-          <Text className="text-xl text-center font-medium">
+          <Text className="text-xl md:text-2xl text-center font-medium">
             Increase the volume to 100% using the slider below or the volume
             buttons on your phone
           </Text>
         </View>
-        <View className="shadow-2xl">
+        <View className="flex items-center shadow-2xl">
           <Image
-            source={require("../../../../assets/media/volumeAdjust.gif")} // Replace with your volume icon
+            source={require("../../../../assets/media/volumeAdjustQ.gif")} // Replace with your volume icon
             resizeMode="contain"
             style={{
-              width: 300,
-              height: 300,
+              width: 300 * (isPad ? 2 : 1),
+              height: 300 * (isPad ? 2 : 1),
             }}
           />
         </View>

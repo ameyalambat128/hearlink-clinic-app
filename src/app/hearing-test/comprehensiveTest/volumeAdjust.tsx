@@ -8,9 +8,12 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Platform,
 } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
+
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 
 export default function Screen() {
   const router = useRouter();
@@ -87,10 +90,12 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8">
-          <Text className="pb-6 text-3xl font-bold">Adjust your Volume</Text>
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
+            Adjust your Volume
+          </Text>
           {/* TODO: Description update here */}
-          <Text className="text-xl text-center font-medium">
+          <Text className="text-xl md:text-2xl text-center font-medium">
             Play the audio below and adjust the volume to a level that it's
             "Loud, but Ok"
           </Text>
@@ -98,31 +103,39 @@ export default function Screen() {
         <View className="flex items-center">
           {isPlaying ? (
             <View className="items-center">
-              <Text className="font-bold italic">
+              <Text className="font-bold italic md:text-2xl">
                 Adjust the volume using the side buttons
               </Text>
               <TouchableOpacity onPress={() => sound?.pauseAsync()}>
-                <Ionicons name="pause" size={50} color="black" />
+                <Ionicons
+                  name="pause"
+                  size={50 * (isPad ? 1.5 : 1)}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
           ) : (
             <View className="items-center">
-              <Text className="font-bold italic">
+              <Text className="font-bold italic md:text-2xl">
                 Click the button below to play
               </Text>
               <TouchableOpacity onPress={loadAndPlaySound}>
-                <Ionicons name="play" size={50} color="black" />
+                <Ionicons
+                  name="play"
+                  size={50 * (isPad ? 1.5 : 1)}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
           )}
         </View>
-        <View className="shadow-2xl">
+        <View className="flex items-center shadow-2xl">
           <Image
             source={require("../../../../assets/media/volumeAdjustQ.gif")} // Replace with your volume icon
             resizeMode="contain"
             style={{
-              width: 300,
-              height: 300,
+              width: 300 * (isPad ? 1.8 : 1),
+              height: 300 * (isPad ? 1.8 : 1),
             }}
           />
         </View>

@@ -10,13 +10,15 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Platform,
 } from "react-native";
 
 import Page from "@/components/Page";
 import { useUserStore } from "@/store/store";
 
+const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 const { width, height } = Dimensions.get("window");
-const ITEM_WIDTH = width * 0.8;
+const ITEM_WIDTH = width * (isPad ? 0.65 : 0.8);
 const ITEM_HEIGHT = ITEM_WIDTH * 1.5;
 const SPACING = 10;
 const SPACER_ITEM_SIZE = (width - ITEM_WIDTH) / 2;
@@ -46,7 +48,7 @@ const tests: {
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
   // {
-  //   id: "3",
+  //   id: "2",
   //   name: "Hearing Screening Test",
   //   description:
   //     "A hearing screening test is a quick and basic procedure used to identify individuals who may have hearing loss and require a more comprehensive auditory assessment.",
@@ -67,10 +69,6 @@ const tests: {
 export default function Hearing() {
   const router = useRouter();
   const { name, dateOfBirth, dateOfTest, testConducted } = useUserStore();
-  console.log(name);
-  console.log(dateOfBirth);
-  console.log(dateOfTest);
-  console.log(testConducted);
 
   const nextPage = (href: any) => {
     router.push(href);
@@ -152,7 +150,7 @@ export default function Hearing() {
               }}
             >
               <Animated.View
-                className="items-center rounded-2xl bg-blue-200"
+                className="items-center rounded-2xl md:rounded-3xl bg-blue-200"
                 style={{
                   marginHorizontal: SPACING,
                   padding: SPACING * 2,
@@ -161,7 +159,7 @@ export default function Hearing() {
                 }}
               >
                 <Pressable
-                  className="items-center"
+                  className="items-center md:mt-8"
                   onPress={() => nextPage(item.link)}
                 >
                   <Image
@@ -173,10 +171,14 @@ export default function Hearing() {
                     }}
                     resizeMode="contain"
                   />
-                  <Text className="text-xl font-bold my-6">{item.name}</Text>
-                  <Text className="text-center font-medium text-gray-700">
-                    {item.description}
-                  </Text>
+                  <View className="items-center md:w-[80%]">
+                    <Text className="text-xl md:text-4xl font-bold my-6 md:mt-12 md:mb-8">
+                      {item.name}
+                    </Text>
+                    <Text className="text-center md:text-2xl font-medium text-gray-700">
+                      {item.description}
+                    </Text>
+                  </View>
                 </Pressable>
               </Animated.View>
             </View>

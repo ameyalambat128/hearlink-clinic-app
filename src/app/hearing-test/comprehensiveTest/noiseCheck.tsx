@@ -29,7 +29,7 @@ export default function Screen() {
   const handleNext = async () => {
     await stopRecording();
     recordingRef.current = null;
-    router.push("/hearing-test/comprehensiveTest/chooseHeadphones");
+    router.push("/hearing-test/comprehensiveTest/connectAirpodsPro");
   };
 
   const startRecording = async () => {
@@ -119,9 +119,11 @@ export default function Screen() {
         }}
       />
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8">
-          <Text className="pb-6 text-3xl font-bold">Find a quiet place</Text>
-          <Text className="text-xl text-center font-medium">
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
+            Find a quiet place
+          </Text>
+          <Text className="text-xl md:text-2xl text-center font-medium">
             The hearing test is most accurate when done in silence
           </Text>
         </View>

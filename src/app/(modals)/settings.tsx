@@ -39,7 +39,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   );
 };
 
-export default function ProfileScreen() {
+export default function Modal() {
   const [isAppleHealthEnabled, setIsAppleHealthEnabled] = useState(false);
 
   return (

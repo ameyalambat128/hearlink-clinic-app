@@ -82,6 +82,13 @@ function RootLayoutNav() {
             ),
           }}
         />
+        <Stack.Screen
+          name="(modals)/report-modal"
+          options={{
+            title: "Report",
+            presentation: "containedModal",
+          }}
+        />
       </Stack>
     </Providers>
   );
