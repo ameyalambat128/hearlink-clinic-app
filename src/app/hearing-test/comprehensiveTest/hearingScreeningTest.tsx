@@ -513,18 +513,18 @@ export default function Screen() {
         }}
       />
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8 lg:pt-10">
-          <Text className="pb-6 text-3xl lg:text-5xl font-bold">
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
             Hearing Screening Test
           </Text>
-          <Text className="text-xl lg:text-3xl text-center font-medium">
+          <Text className="text-xl md:text-2xl text-center font-medium">
             Whenever you hear a beep, no matter how faint, please press yes.
           </Text>
         </View>
 
         <View className="flex items-center">
           <TouchableOpacity
-            className="items-center justify-center rounded-full bg-blue-200 p-32 lg:p-44 mb-8 lg:aspect-square lg:w-[450px]"
+            className="items-center justify-center rounded-full bg-blue-200 p-32 md:p-44 mb-8 md:aspect-square md:w-[450px]"
             onPress={handleYesPress}
           >
             <Text className="text-4xl font-medium text-blue-800">Yes</Text>

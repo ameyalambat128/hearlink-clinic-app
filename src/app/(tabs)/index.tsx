@@ -150,7 +150,7 @@ export default function Hearing() {
               }}
             >
               <Animated.View
-                className="items-center rounded-2xl lg:rounded-3xl bg-blue-200"
+                className="items-center rounded-2xl md:rounded-3xl bg-blue-200"
                 style={{
                   marginHorizontal: SPACING,
                   padding: SPACING * 2,
@@ -159,7 +159,7 @@ export default function Hearing() {
                 }}
               >
                 <Pressable
-                  className="items-center lg:mt-10"
+                  className="items-center md:mt-8"
                   onPress={() => nextPage(item.link)}
                 >
                   <Image
@@ -171,11 +171,11 @@ export default function Hearing() {
                     }}
                     resizeMode="contain"
                   />
-                  <View className="items-center lg:w-[80%]">
-                    <Text className="text-xl lg:text-4xl font-bold my-6 lg:mt-16 lg:mb-12">
+                  <View className="items-center md:w-[80%]">
+                    <Text className="text-xl md:text-4xl font-bold my-6 md:mt-12 md:mb-8">
                       {item.name}
                     </Text>
-                    <Text className="text-center lg:text-2xl font-medium text-gray-700">
+                    <Text className="text-center md:text-2xl font-medium text-gray-700">
                       {item.description}
                     </Text>
                   </View>

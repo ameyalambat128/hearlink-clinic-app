@@ -43,7 +43,7 @@ export default function Screen() {
         </View>
         <View className="flex flex-col justify-center w-full">
           <TouchableOpacity
-            className={`flex flex-row items-center rounded-xl border-2 bg-gray-200 p-4 lg:p-10 mb-8 lg:mb-20 ${
+            className={`flex flex-row items-center rounded-xl border-2 bg-gray-200 p-4 md:p-10 mb-8 md:mb-20 ${
               selectedHeadphones === "airpodsPro"
                 ? "border-2 border-blue-500"
                 : "border-transparent"
@@ -57,7 +57,7 @@ export default function Screen() {
             <Text className="ml-4 text-lg font-semibold">Airpods Pro 2</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex flex-row items-center rounded-xl border-2 bg-gray-200 lg:p-10 ${
+            className={`flex flex-row items-center rounded-xl border-2 bg-gray-200 md:p-10 ${
               selectedHeadphones === "airpodsMax"
                 ? "border-blue-500"
                 : "border-transparent"

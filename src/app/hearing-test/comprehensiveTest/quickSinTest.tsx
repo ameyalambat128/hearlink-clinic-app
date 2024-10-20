@@ -384,12 +384,12 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8 lg:pt-10">
-          <Text className="pb-6 text-3xl lg:text-5xl font-bold">
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
             Quick SIN Test
           </Text>
           {/* TODO: Description update here */}
-          <Text className="text-xl lg:text-3xl text-center font-medium">
+          <Text className="text-xl md:text-2xl text-center font-medium">
             After hearing each sentence, repeat it back immediately. Remember,
             the noise level will change, so some parts might be easier or harder
             to hear
@@ -411,7 +411,7 @@ export default function Screen() {
             </View>
           ) : (
             <View className="items-center">
-              <Text className="font-bold italic lg:text-2xl">
+              <Text className="font-bold italic md:text-2xl">
                 Click the button below to play
               </Text>
               <TouchableOpacity onPress={loadAndPlaySound}>

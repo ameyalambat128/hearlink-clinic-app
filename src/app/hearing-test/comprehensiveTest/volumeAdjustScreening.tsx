@@ -17,12 +17,12 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8 lg:pt-10">
-          <Text className="pb-6 text-3xl lg:text-5xl font-bold">
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
             Adjust your Volume
           </Text>
           {/* TODO: Description update here */}
-          <Text className="text-xl lg:text-3xl text-center font-medium">
+          <Text className="text-xl md:text-2xl text-center font-medium">
             Increase the volume to 100% using the slider below or the volume
             buttons on your phone
           </Text>

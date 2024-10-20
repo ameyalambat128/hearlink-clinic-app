@@ -8,18 +8,20 @@ import {
   Modal,
 } from "react-native";
 import * as FileSystem from "expo-file-system";
-import Pdf from "react-native-pdf";
 import uuid from "react-native-uuid";
 import axios from "axios";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 
 import {
   useHearingScreeningResultsStore,
   useReportsStore,
   useUserStore,
 } from "@/store/store";
-import { useEffect, useState } from "react";
 
 export default function Screen() {
+  const router = useRouter();
+
   const { leftEarResults, rightEarResults } = useHearingScreeningResultsStore(
     (state) => ({
       leftEarResults: state.leftEarResults,
@@ -106,7 +108,7 @@ export default function Screen() {
 
   return (
     <SafeAreaView className="flex-1 items-center gap-y-4 justify-start">
-      <View className="mt-20 lg:mt-40 w-4/5 rounded-3xl bg-blue-200 p-6 shadow-xl dark:bg-black">
+      <View className="mt-20 md:mt-40 w-4/5 rounded-3xl bg-blue-200 p-6 shadow-xl dark:bg-black">
         <View className="mb-6 self-center p-2">
           <Foundation
             name="results"
@@ -115,10 +117,10 @@ export default function Screen() {
           />
         </View>
         <View className="flex items-center">
-          <Text className="mb-6 text-center text-2xl lg:text-5xl font-bold">
+          <Text className="mb-6 text-center text-2xl md:text-4xl font-bold">
             Results
           </Text>
-          <Text className="mb-4 text-center text-2xl lg:text-4xl font-bold">
+          <Text className="mb-4 text-center text-2xl md:text-4xl font-bold">
             Right Ear
           </Text>
           <FlatList
@@ -150,7 +152,7 @@ export default function Screen() {
               </View>
             )}
           />
-          <Text className="my-4 text-center text-2xl lg:text-4xl font-bold">
+          <Text className="my-4 text-center text-2xl md:text-4xl font-bold">
             Left Ear
           </Text>
           <FlatList
@@ -185,7 +187,10 @@ export default function Screen() {
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => setShowPdf(true)}
+        onPress={() =>
+          //@ts-ignore
+          router.push(`/(modals)/report-modal?pdfPath=${pdfPath}`)
+        }
         disabled={loading || !pdfPath}
         className={`py-3 px-6 rounded-xl ${
           loading || !pdfPath ? "bg-gray-400" : "bg-blue-500"
@@ -196,7 +201,7 @@ export default function Screen() {
         </Text>
       </TouchableOpacity>
 
-      <Modal
+      {/* <Modal
         visible={showPdf}
         presentationStyle="fullScreen"
         animationType="slide"
@@ -226,7 +231,7 @@ export default function Screen() {
             }}
           />
         </View>
-      </Modal>
+      </Modal> */}
     </SafeAreaView>
   );
 }

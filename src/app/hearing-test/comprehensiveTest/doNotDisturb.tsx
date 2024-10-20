@@ -16,11 +16,11 @@ export default function Screen() {
   return (
     <SafeAreaView className="flex h-full items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8 lg:pt-10">
-          <Text className="pb-6 text-3xl lg:text-5xl font-bold">
+        <View className="flex items-center pt-8 md:pt-10">
+          <Text className="pb-6 text-3xl md:text-4xl font-bold">
             Turn on Do Not Disturb
           </Text>
-          <Text className="text-xl lg:text-3xl text-center font-medium">
+          <Text className="text-xl md:text-2xl text-center font-medium">
             To avoid interruptions, and to ensure the most accurate results,
             turn on Do Not Disturb
           </Text>
@@ -29,7 +29,7 @@ export default function Screen() {
           <Video
             source={require("../../../../assets/media/do-not-disturb.mp4")}
             style={{
-              height: 480 * (isPad ? 2 : 1),
+              height: 480 * (isPad ? 1.6 : 1),
               width: isPad ? "80%" : "100%",
               borderRadius: 10,
             }}
