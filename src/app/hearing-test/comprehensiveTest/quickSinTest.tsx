@@ -13,7 +13,7 @@ import Voice from "@react-native-voice/voice";
 
 import ExternalLink from "@/components/ExternalLink";
 import { SetUpButton } from "@/components/ui/Button";
-import { extractKeywords } from "@/lib/utils";
+import { chunkArray, extractKeywords, getKeywordsForTrack } from "@/lib/utils";
 import { useUserStore } from "@/store/store";
 
 const audioFilePaths = {
@@ -29,105 +29,6 @@ const audioFilePaths = {
   12: require("../../../../assets/audio/quicksin/track_12.mp3"),
   13: require("../../../../assets/audio/quicksin/track_13.mp3"),
   14: require("../../../../assets/audio/quicksin/track_14.mp3"),
-};
-
-const trackTimings = {
-  3: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  4: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  5: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_6: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_7: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_8: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_9: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_10: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_11: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_12: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_13: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
-  track_14: {
-    "1": [7, 13], // Sentence silence 1: start at 7s, end at 13s
-    "2": [15, 22],
-    "3": [25, 30],
-    "4": [33, 39],
-    "5": [42, 48],
-    "6": [52, 58],
-  },
 };
 
 const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
@@ -162,6 +63,8 @@ export default function Screen() {
   const [score, setScore] = useState<number | null>(null);
 
   const [finished, setFinished] = useState<boolean>(false);
+  const [words, setWords] = useState<string[]>([]);
+  const [selectedWords, setSelectedWords] = useState({});
   const trackNumberRef = useRef<string | null>(null);
   const currentSentenceRef = useRef<string | null>(null);
 
@@ -202,94 +105,8 @@ export default function Screen() {
     }
   };
 
-  useEffect(() => {
-    Voice.onSpeechStart = onSpeechStart;
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechEnd = onSpeechEnd;
-
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
-
-  const onSpeechStart = (e: any) => {
-    console.log("onSpeechStart: ", e);
-  };
-
-  const onSpeechEnd = () => {
-    console.log("Speech recognition ended");
-  };
-
-  /*
-   * TODO: onSpeechResults
-   * Test is still not completely correct
-   * Need to make sure that each sentence is graded seperately
-   * currently words which is all the word in the transcription seperated by space is being graded
-   * Need to make sure that each sentence is graded seperately
-   * Somehow need to add markers whenever a sentence is completed or
-   * somehow add punctuation to the transcription
-   */
-  const sentenceRefs = useRef<Record<string, number>>({
-    "1": 0,
-    "2": 0,
-    "3": 0,
-    "4": 0,
-    "5": 0,
-    "6": 0,
-  });
-  const onSpeechResults = (e: any) => {
-    const transcription = e.value;
-    console.log("Transcription:", transcription);
-
-    // Separate words in the transcription
-    const words = transcription[0].toLowerCase().split(/\s+/);
-    console.log("Words:", words);
-
-    const trackId = trackNumberRef.current;
-    const currentSentence = currentSentenceRef.current; // Use current sentence ID
-
-    // Get the keywords for the current sentence
-    const keywordsList = extractKeywords(trackId, parseInt(currentSentence));
-    let correctCount = 0;
-
-    keywordsList.forEach((keyword: string) => {
-      if (words.includes(keyword.toLowerCase())) {
-        correctCount++;
-      }
-    });
-
-    // Update the sentence result in the ref
-    sentenceRefs.current[currentSentence] = correctCount;
-    console.log(`Sentence ${currentSentence} result stored:`, correctCount);
-  };
-
-  const calculateSNRLoss = () => {
-    const totalScore = Object.values(sentenceRefs.current).reduce(
-      (acc, score) => acc + score,
-      0
-    );
-    const snrLoss = 25.5 - totalScore;
-    console.log("SNR Loss:", snrLoss);
-    setScore(snrLoss);
-    setSnrLoss(snrLoss + " dB");
-  };
-
-  const startRecognizing = async () => {
-    try {
-      await Voice.start("en-US");
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const stopRecognizing = async () => {
-    try {
-      await Voice.stop();
-      setFinished(true);
-      console.log("Result State:", result);
-    } catch (e) {
-      console.error(e);
-    }
+  const handleWordPress = (index) => {
+    setSelectedWords((prevWords) => ({ ...prevWords, [index]: words[index] }));
   };
 
   const loadAndPlaySound = useCallback(async () => {
@@ -305,8 +122,7 @@ export default function Screen() {
 
       const trackKeys = Object.keys(audioFilePaths);
       const randomIndex = Math.floor(Math.random() * trackKeys.length);
-      // const randomTrackNumber = trackKeys[randomIndex];
-      const randomTrackNumber = "3";
+      const randomTrackNumber = trackKeys[randomIndex];
 
       // @ts-ignore
       const audioFile = audioFilePaths[randomTrackNumber];
@@ -319,9 +135,9 @@ export default function Screen() {
         onPlaybackStatusUpdate
       );
       trackNumberRef.current = randomTrackNumber;
+      setWords(getKeywordsForTrack(randomTrackNumber));
       setSound(newSound);
       playSound(newSound);
-      await startRecognizing();
     } catch (error) {
       console.error("Error loading sound:", error);
     }
@@ -331,44 +147,11 @@ export default function Screen() {
     async (newStatus: AVPlaybackStatus) => {
       if (newStatus.isLoaded) {
         const currentTime = Math.floor(newStatus.positionMillis * 0.001); // Convert to seconds
-        const trackId = trackNumberRef.current;
-
-        if (trackId && trackTimings[trackId]) {
-          const sentences = trackTimings[trackId];
-
-          Object.keys(sentences).forEach(async (sentenceId) => {
-            const [start, end] = sentences[sentenceId];
-
-            console.log(
-              `Checking sentence ${sentenceId}: currentTime = ${currentTime}, start = ${start}, end = ${end}`
-            );
-
-            // Sentence is currently playing, transcription should start
-            if (currentTime >= start && currentTime < end) {
-              currentSentenceRef.current = sentenceId; // Update the current sentence reference
-              console.log(`Starting transcription for sentence ${sentenceId}`);
-              await startRecognizing(); // Start speech recognition
-            }
-
-            // Sentence has finished playing, transcription should stop
-            if (currentTime >= end) {
-              console.log(`Stopping transcription for sentence ${sentenceId}`);
-
-              // If this is the last sentence, calculate the SNR loss
-              if (newStatus.didJustFinish && !newStatus.isLooping) {
-                console.log(sentenceRefs.current);
-
-                await stopRecognizing();
-                calculateSNRLoss();
-              }
-            }
-          });
-        }
 
         setIsPlaying(newStatus.isPlaying); // Update playback status
       }
     },
-    [stopRecognizing, startRecognizing]
+    []
   );
 
   // Sound Unloading
@@ -380,6 +163,8 @@ export default function Screen() {
         }
       : undefined;
   }, [sound]);
+
+  const rows = chunkArray(words, 5);
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
@@ -401,29 +186,38 @@ export default function Screen() {
             What is SNR loss?
           </ExternalLink> */}
         </View>
-        <View className="flex items-center">
+        <View className="flex flex-col justify-around w-full">
           {isPlaying ? (
-            <View className="flex items-center">
-              <Text className="font-bold">Playing</Text>
-              <Text className="font-bold">
-                Repeat the senetence immediately
-              </Text>
+            <View className="flex flex-col justify-around w-full">
+              {rows.map((row, rowIndex) => (
+                <View
+                  key={rowIndex}
+                  className="flex flex-row justify-around gap-16 w-full"
+                >
+                  {row.map((word, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      className="m-3 w-20 h-10 justify-center items-center bg-gray-200 rounded-md"
+                      onPress={() => handleWordPress(index + rowIndex * 5)}
+                    >
+                      <Text>{word}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ))}
             </View>
           ) : (
             <View className="items-center">
-              <Text className="font-bold italic md:text-2xl">
+              <Text className="font-bold italic">
                 Click the button below to play
               </Text>
               <TouchableOpacity onPress={loadAndPlaySound}>
-                <Ionicons
-                  name="play"
-                  size={50 * (isPad ? 2 : 1)}
-                  color="black"
-                />
+                <Ionicons name="play" size={50} color="black" />
               </TouchableOpacity>
             </View>
           )}
         </View>
+
         <View className="items-center">
           {finished && score && (
             <Text className="text-2xl font-bold">
