@@ -12,7 +12,7 @@ export default function Screen() {
   const [headphonesConnected, setHeadphonesConnected] = useState(true);
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/volumeAdjust");
+    router.push("/hearing-test/comprehensiveTest/volumeAdjustScreening");
   };
 
   return (

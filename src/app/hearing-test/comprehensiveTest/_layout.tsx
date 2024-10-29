@@ -104,6 +104,21 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
+        name="volumeAdjustScreening"
+        options={{
+          title: "Get Set Up",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={30}
+                color={Colors[colorScheme ?? "light"].text}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
         name="doNotDisturb"
         options={{
           title: "Get Set Up",
@@ -148,21 +163,7 @@ export default function Layout() {
           ),
         }}
       />
-      <Stack.Screen
-        name="volumeAdjustScreening"
-        options={{
-          title: "Get Set Up",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons
-                name="chevron-back-outline"
-                size={30}
-                color={Colors[colorScheme ?? "light"].text}
-              />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+
       <Stack.Screen name="hearingScreeningTest" />
       <Stack.Screen
         name="hearingScreeningResults"
