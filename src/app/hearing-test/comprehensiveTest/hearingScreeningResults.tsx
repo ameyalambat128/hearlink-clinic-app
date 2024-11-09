@@ -200,38 +200,6 @@ export default function Screen() {
           {loading ? "Generating Report..." : "Open Report"}
         </Text>
       </TouchableOpacity>
-
-      {/* <Modal
-        visible={showPdf}
-        presentationStyle="fullScreen"
-        animationType="slide"
-        onRequestClose={() => setShowPdf(false)}
-      >
-        <View className="flex-1 justify-center items-center gap-3 bg-white dark:bg-gray-900">
-          <TouchableOpacity
-            onPress={() => setShowPdf(false)}
-            className="bg-red-500 py-2 px-4 rounded mt-4"
-          >
-            <Text className="text-white text-center font-semibold">Close</Text>
-          </TouchableOpacity>
-          <Pdf
-            source={{ uri: pdfPath, cache: true }}
-            style={{ flex: 1, alignSelf: "stretch" }}
-            onLoadComplete={(numberOfPages, filePath) => {
-              console.log(`number of pages: ${numberOfPages}`);
-            }}
-            onPageChanged={(page, numberOfPages) => {
-              console.log(`current page: ${page}`);
-            }}
-            onError={(error) => {
-              console.error(error);
-            }}
-            onPressLink={(uri) => {
-              console.log(`Link pressed: ${uri}`);
-            }}
-          />
-        </View>
-      </Modal> */}
     </SafeAreaView>
   );
 }
