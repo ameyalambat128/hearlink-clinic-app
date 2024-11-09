@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { AVPlaybackStatus, Audio } from "expo-av";
+import { AVPlaybackStatus, AVPlaybackStatusSuccess, Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -60,16 +60,19 @@ export default function Screen() {
     6: 0,
   });
   const [resultCount, setResultCount] = useState<number>(0);
-  const [score, setScore] = useState<number | null>(null);
+  const [localScore, setLocalScore] = useState<number | null>(null);
 
   const [finished, setFinished] = useState<boolean>(false);
   const [words, setWords] = useState<string[]>([]);
-  const [selectedWords, setSelectedWords] = useState({});
+  const [selectedWords, setSelectedWords] = useState<Record<number, boolean>>(
+    {}
+  );
+
   const trackNumberRef = useRef<string | null>(null);
   const currentSentenceRef = useRef<string | null>(null);
 
   const handleNext = () => {
-    // stopRecognizing();
+    calculateSelectedWordsCount();
     router.push("/hearing-test/comprehensiveTest/volumeAdjustScreening");
   };
 
@@ -105,8 +108,22 @@ export default function Screen() {
     }
   };
 
-  const handleWordPress = (index) => {
-    setSelectedWords((prevWords) => ({ ...prevWords, [index]: words[index] }));
+  const handleWordPress = (index: number) => {
+    setSelectedWords((prevWords) => ({
+      ...prevWords,
+      [index]: !prevWords[index], // Toggle selection
+    }));
+  };
+
+  const calculateSelectedWordsCount = () => {
+    const selectedCount = Object.values(selectedWords).filter(
+      (isSelected) => isSelected
+    ).length;
+    const snrLoss = 25.5 - selectedCount;
+    console.log("Selected Words Count:", selectedCount);
+    console.log("SNR Loss:", snrLoss);
+    setLocalScore(snrLoss);
+    setSnrLoss(snrLoss + " dB");
   };
 
   const loadAndPlaySound = useCallback(async () => {
@@ -145,10 +162,10 @@ export default function Screen() {
 
   const onPlaybackStatusUpdate = useCallback(
     async (newStatus: AVPlaybackStatus) => {
+      setStatus(newStatus);
       if (newStatus.isLoaded) {
         const currentTime = Math.floor(newStatus.positionMillis * 0.001); // Convert to seconds
-
-        setIsPlaying(newStatus.isPlaying); // Update playback status
+        setIsPlaying(newStatus.isPlaying);
       }
     },
     []
@@ -197,7 +214,11 @@ export default function Screen() {
                   {row.map((word, index) => (
                     <TouchableOpacity
                       key={index}
-                      className="m-3 w-20 h-10 justify-center items-center bg-gray-200 rounded-md"
+                      className={`m-3 w-20 h-10 justify-center items-center rounded-md ${
+                        selectedWords[index + rowIndex * 5]
+                          ? "bg-blue-300"
+                          : "bg-gray-200"
+                      }`}
                       onPress={() => handleWordPress(index + rowIndex * 5)}
                     >
                       <Text>{word}</Text>
@@ -219,9 +240,9 @@ export default function Screen() {
         </View>
 
         <View className="items-center">
-          {finished && score && (
+          {finished && localScore && (
             <Text className="text-2xl font-bold">
-              Your SNR Loss is {score} dB
+              Your SNR Loss is {localScore} dB
             </Text>
           )}
         </View>
