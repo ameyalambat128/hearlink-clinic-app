@@ -19,9 +19,8 @@ export default function Screen() {
           </Text>
           <Text className="text-xl md:text-2xl text-center font-medium">
             Easily screen your hearing with key tones at different frequencies
-            and assess your ability to hear speech in noise using the QuickSIN
-            test. Get instant results to help determine if you need a more
-            detailed hearing test.
+            and assess your hearing ability. Get instant results to help
+            determine if you need a more detailed hearing test.
           </Text>
         </View>
         <View className="items-center">

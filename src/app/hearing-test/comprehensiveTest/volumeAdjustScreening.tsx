@@ -11,7 +11,7 @@ export default function Screen() {
   const [volume, setVolume] = useState(0);
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/hearingScreeningTest");
+    router.push("/hearing-test/comprehensiveTest/doNotDisturb");
   };
 
   return (
