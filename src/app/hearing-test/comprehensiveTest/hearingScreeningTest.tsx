@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { usePauseStore, useHearingScreeningResultsStore } from "@/store/store";
 import Colors from "@/constants/Colors";
 
-const frequencies: number[] = [1000, 2000, 4000, 500];
+const frequencies: number[] = [1000, 2000, 4000, 8000, 500];
 const INITIAL_INTENSITY: number = 35;
 const SECOND_INTENSITY: number = 25;
 const TEST_INTENSITY_STEP_UP: number = 5;
