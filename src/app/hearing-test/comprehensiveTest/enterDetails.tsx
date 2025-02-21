@@ -78,9 +78,9 @@ export default function Screen() {
             <Feather name="calendar" size={19} className="mr-2" />
             {localBirthDate ? (
               <Text>
-                {localBirthDate.getDate().toString().padStart(2, "0") +
+                {(localBirthDate.getMonth() + 1).toString().padStart(2, "0") +
                   "/" +
-                  (localBirthDate.getMonth() + 1).toString().padStart(2, "0") +
+                  localBirthDate.getDate().toString().padStart(2, "0") +
                   "/" +
                   localBirthDate.getFullYear()}
               </Text>
