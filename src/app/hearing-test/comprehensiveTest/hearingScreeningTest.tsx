@@ -542,7 +542,7 @@ export default function Screen() {
           </Text>
         </View>
 
-        <View className="flex items-center">
+        <View className="flex items-center md:justify-end md:h-3/5">
           <TouchableOpacity
             className="items-center justify-center rounded-full bg-blue-200 p-32 md:p-44 mb-8 md:aspect-square md:w-[450px]"
             onPress={handleYesPress}
