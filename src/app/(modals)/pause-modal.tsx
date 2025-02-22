@@ -1,7 +1,8 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView, TouchableOpacity, Text } from "react-native";
+import { usePauseStore } from "@/store/store";
 
 type ModalItemProps = {
   name: string;
@@ -40,15 +41,42 @@ const ModalItem: React.FC<ModalItemProps> = ({
 export default function Modal() {
   const router = useRouter();
   const [isAppleHealthEnabled, setIsAppleHealthEnabled] = useState(false);
+  const { togglePause } = usePauseStore();
+
+  const handleModalAction = (action: () => void) => {
+    // First toggle pause back to false
+    togglePause();
+    // Then perform the navigation action
+    action();
+  };
 
   return (
     <SafeAreaView className="flex-1 items-center mt-6">
+      <Stack.Screen
+        options={{
+          title: "Pause",
+          presentation: "modal",
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() =>
+                handleModalAction(() => {
+                  router.dismiss();
+                })
+              }
+            >
+              <Ionicons name="close-outline" size={30} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <ModalItem
         name="Restart"
         iconName="replay"
         onPress={() => {
-          router.push({
-            pathname: "/hearing-test/hearingScreening/practiceHearingScreening",
+          handleModalAction(() => {
+            router.push({
+              pathname: "/hearing-test/comprehensiveTest/connectAirpodsPro",
+            });
           });
         }}
         group="none"
@@ -57,7 +85,9 @@ export default function Modal() {
         name="Go back home"
         iconName="home"
         onPress={() => {
-          router.dismissAll();
+          handleModalAction(() => {
+            router.dismissAll();
+          });
         }}
         group="none"
       />

@@ -70,18 +70,7 @@ function RootLayoutNav() {
             ),
           }}
         />
-        <Stack.Screen
-          name="(modals)/pause-modal"
-          options={{
-            title: "Pause",
-            presentation: "modal",
-            headerRight: () => (
-              <TouchableOpacity onPress={() => router.dismiss()}>
-                <Ionicons name="close-outline" size={30} />
-              </TouchableOpacity>
-            ),
-          }}
-        />
+        <Stack.Screen name="(modals)/pause-modal" />
         <Stack.Screen
           name="(modals)/report-modal"
           options={{

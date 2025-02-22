@@ -460,7 +460,7 @@ export default function Screen() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       moveToNextFrequency();
-    }, 5000); // 5 seconds
+    }, 8000); // 8 seconds
 
     timeoutIdRef.current = timeout;
 
@@ -471,7 +471,18 @@ export default function Screen() {
     };
   }, [currentFrequencyIndex, currentIntensity, currentEar]);
 
-  // Sound Pausing
+  // Add cleanup function to handle test interruption
+  const cleanupTest = useCallback(() => {
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
+    if (sound) {
+      sound.unloadAsync();
+    }
+  }, [sound]);
+
+  // Update your existing useEffect for isPaused
   useEffect(() => {
     if (isPaused) {
       // Pause the audio
@@ -479,10 +490,19 @@ export default function Screen() {
         sound.pauseAsync();
         console.log("Sound Paused");
       }
-    } else {
-      // Resume the audio if needed
+      // Clear any pending timeouts
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
+      }
     }
   }, [isPaused, sound]);
+
+  // Add cleanup effect when component unmounts
+  useEffect(() => {
+    return () => {
+      cleanupTest();
+    };
+  }, [cleanupTest]);
 
   // Sound Unloading
   useEffect(() => {
