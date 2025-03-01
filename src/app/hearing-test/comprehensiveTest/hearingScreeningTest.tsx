@@ -7,7 +7,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { SafeAreaView, TouchableOpacity, View, Text } from "react-native";
+import {
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+  Text,
+  Animated,
+} from "react-native";
+import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 
 import { usePauseStore, useHearingScreeningResultsStore } from "@/store/store";
@@ -323,6 +330,7 @@ export default function Screen() {
   const [currentEar, setCurrentEar] = useState<"right" | "left">("right");
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
   const [results, setResults] = useState({ right: {}, left: {} });
+  const [progress, setProgress] = useState(new Animated.Value(0));
 
   const handleNext = () => {
     router.push("/hearing-test/comprehensiveTest/hearingScreeningResults");
@@ -504,6 +512,23 @@ export default function Screen() {
     };
   }, [cleanupTest]);
 
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(progress, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(progress, {
+          toValue: 0,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
   // Sound Unloading
   useEffect(() => {
     return sound
@@ -538,26 +563,59 @@ export default function Screen() {
             Hearing Screening Test
           </Text>
           <Text className="text-xl md:text-2xl text-center font-medium">
-            Whenever you hear a beep, no matter how faint, please press yes.
+            Whenever you hear a tone, no matter how faint, please press yes.
           </Text>
         </View>
 
-        <View className="flex items-center md:justify-end md:h-3/5">
-          <TouchableOpacity
-            className="items-center justify-center rounded-full bg-blue-200 p-32 md:p-44 mb-8 md:aspect-square md:w-[450px]"
-            onPress={handleYesPress}
+        <View className="mb-4 flex items-center justify-center gap-y-36 h-2/3 relative">
+          <Animated.View
+            style={{
+              width: 250,
+              height: 250,
+              borderRadius: 150,
+              borderWidth: 3,
+              borderColor: "rgba(30, 144, 255, 0.6)",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "transparent",
+              opacity: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.7, 1],
+              }),
+              transform: [
+                {
+                  scale: progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, 1.1],
+                  }),
+                },
+              ],
+            }}
           >
-            <Text className="text-4xl font-medium text-blue-800">Yes</Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity
-            className="items-center justify-center rounded-full bg-red-200 p-4"
-            onPress={handleNoPress}
-          >
-            <Text className="text-base font-medium text-red-800">No</Text>
-          </TouchableOpacity> */}
+            <TouchableOpacity
+              className="items-center justify-center rounded-full z-10"
+              style={{ width: 250, height: 250 }} // Reduced from w-40 h-40 (160px) to maintain proportion
+              onPress={handleYesPress} // Make sure to use your actual handler function
+            >
+              {/* Empty content for hollow appearance */}
+              <Text className="text-blue-800 text-xl font-bold"></Text>
+            </TouchableOpacity>
+            <BlurView
+              intensity={10} // Adjust blur strength
+              tint="regular"
+              className="absolute w-[250px] h-[250px] rounded-full"
+              style={{
+                position: "absolute",
+                width: 300,
+                height: 300,
+                borderRadius: 125,
+              }}
+            />
+          </Animated.View>
+          <Text className="text-xl text-center mt-8 text-gray-700 font-medium">
+            Tap the circle when you hear a tone
+          </Text>
         </View>
-
-        <View className="mb-4 flex items-center"></View>
       </View>
     </SafeAreaView>
   );
