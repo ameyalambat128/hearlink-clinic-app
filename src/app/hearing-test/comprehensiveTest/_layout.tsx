@@ -149,6 +149,21 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
+        name="getReadyForTest"
+        options={{
+          title: "Get Ready",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={30}
+                color={Colors[colorScheme ?? "light"].text}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
         name="quickSinTest"
         options={{
           title: "Test",
@@ -163,7 +178,6 @@ export default function Layout() {
           ),
         }}
       />
-
       <Stack.Screen name="hearingScreeningTest" />
       <Stack.Screen
         name="hearingScreeningResults"
