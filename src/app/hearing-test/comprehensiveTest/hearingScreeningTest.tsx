@@ -323,6 +323,7 @@ export default function Screen() {
   );
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isPressed, setIsPressed] = useState(false);
   const [status, setStatus] = useState<AVPlaybackStatus>();
   const [currentFrequencyIndex, setCurrentFrequencyIndex] = useState<number>(0);
   const [currentIntensity, setCurrentIntensity] =
@@ -331,6 +332,8 @@ export default function Screen() {
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
   const [results, setResults] = useState({ right: {}, left: {} });
   const [progress, setProgress] = useState(new Animated.Value(0));
+
+  const pressAnim = useRef(new Animated.Value(1)).current;
 
   const handleNext = () => {
     router.push("/hearing-test/comprehensiveTest/hearingScreeningResults");
@@ -454,6 +457,26 @@ export default function Screen() {
   const testPaused = () => {
     togglePause();
     router.push("/(modals)/pause-modal");
+  };
+
+  const handlePressIn = () => {
+    setIsPressed(true);
+    Animated.timing(pressAnim, {
+      toValue: 0.97,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    setIsPressed(false);
+    Animated.timing(pressAnim, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+
+    handleYesPress();
   };
 
   // Test phase sound loading
@@ -584,18 +607,22 @@ export default function Screen() {
               }),
               transform: [
                 {
-                  scale: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 1.1],
-                  }),
+                  scale: Animated.multiply(
+                    progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.1],
+                    }),
+                    pressAnim
+                  ),
                 },
               ],
             }}
           >
             <TouchableOpacity
               className="items-center justify-center rounded-full z-10"
-              style={{ width: 250, height: 250 }} // Reduced from w-40 h-40 (160px) to maintain proportion
-              onPress={handleYesPress} // Make sure to use your actual handler function
+              style={{ width: 250, height: 250 }}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
             >
               {/* Empty content for hollow appearance */}
               <Text className="text-blue-800 text-xl font-bold"></Text>
