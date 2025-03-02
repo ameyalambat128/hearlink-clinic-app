@@ -459,7 +459,7 @@ export default function Screen() {
     router.push("/(modals)/pause-modal");
   };
 
-  const handlePressIn = () => {
+  const handleButtonPressIn = () => {
     setIsPressed(true);
     Animated.timing(pressAnim, {
       toValue: 0.97,
@@ -468,7 +468,7 @@ export default function Screen() {
     }).start();
   };
 
-  const handlePressOut = () => {
+  const handleButtonPressOut = () => {
     setIsPressed(false);
     Animated.timing(pressAnim, {
       toValue: 1,
@@ -621,8 +621,8 @@ export default function Screen() {
             <TouchableOpacity
               className="items-center justify-center rounded-full z-10"
               style={{ width: 250, height: 250 }}
-              onPressIn={handlePressIn}
-              onPressOut={handlePressOut}
+              onPressIn={handleButtonPressIn}
+              onPressOut={handleButtonPressOut}
             >
               {/* Empty content for hollow appearance */}
               <Text className="text-blue-800 text-xl font-bold"></Text>
