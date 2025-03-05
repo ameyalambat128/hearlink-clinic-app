@@ -43,7 +43,7 @@ const tests: {
     id: "1",
     name: "Hearing Screening Test",
     description: "Assess your hearing ability",
-    link: "/hearing-test/comprehensiveTest/",
+    link: "/hearing-test/comprehensiveTest/hearingScreeningTest",
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
   // {
