@@ -55,7 +55,6 @@ export default function Modal() {
       <Stack.Screen
         options={{
           title: "Pause",
-          presentation: "modal",
           headerRight: () => (
             <TouchableOpacity
               onPress={() =>
