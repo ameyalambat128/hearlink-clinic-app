@@ -329,7 +329,6 @@ export default function Screen() {
   const [currentIntensity, setCurrentIntensity] =
     useState<number>(INITIAL_INTENSITY);
   const [currentEar, setCurrentEar] = useState<"right" | "left">("right");
-  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
   const [results, setResults] = useState({ right: {}, left: {} });
   const [progress, setProgress] = useState(new Animated.Value(0));
 
@@ -398,10 +397,6 @@ export default function Screen() {
   };
 
   const handleYesPress = async () => {
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-      timeoutIdRef.current = null;
-    }
     if (currentIntensity === SECOND_INTENSITY) {
       setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
       moveToNextFrequency();
@@ -428,27 +423,30 @@ export default function Screen() {
       return currentResults;
     });
     handleNext();
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-      timeoutIdRef.current = null;
-    }
   };
 
   const moveToNextFrequency = () => {
+    // First, save the current frequency result
+    setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
+
+    // Check if we're at the last frequency in the array
     if (currentFrequencyIndex < frequencies.length - 1) {
-      setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
+      // Move to next frequency in the same ear
       setCurrentFrequencyIndex((prevIndex) => prevIndex + 1);
       setCurrentIntensity(INITIAL_INTENSITY);
     } else {
+      // We've reached the end of frequencies for current ear
       if (currentEar === "right") {
-        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
-        setCurrentFrequencyIndex(0);
+        // Switch to left ear and reset to first frequency
         setCurrentEar("left");
-        console.log(currentFrequencyIndex);
+        setCurrentFrequencyIndex(0);
         setCurrentIntensity(INITIAL_INTENSITY);
+        console.log(
+          "Switching to left ear, starting with frequency:",
+          frequencies[0]
+        );
       } else {
-        // Test is complete for both ears
-        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
+        // Both ears have been tested for all frequencies
         finishTest();
       }
     }
@@ -493,25 +491,10 @@ export default function Screen() {
       moveToNextFrequency();
     }, 8000); // 8 seconds
 
-    timeoutIdRef.current = timeout;
-
-    return () => {
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-      }
-    };
+    return () => {};
   }, [currentFrequencyIndex, currentIntensity, currentEar]);
 
   // Add cleanup function to handle test interruption
-  const cleanupTest = useCallback(() => {
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-      timeoutIdRef.current = null;
-    }
-    if (sound) {
-      sound.unloadAsync();
-    }
-  }, [sound]);
 
   // Update your existing useEffect for isPaused
   useEffect(() => {
@@ -521,20 +504,20 @@ export default function Screen() {
         sound.pauseAsync();
         console.log("Sound Paused");
       }
-      // Clear any pending timeouts
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-      }
     }
   }, [isPaused, sound]);
 
-  // Add cleanup effect when component unmounts
+  // Sound Unloading
   useEffect(() => {
-    return () => {
-      cleanupTest();
-    };
-  }, [cleanupTest]);
+    return sound
+      ? () => {
+          // console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
+  // Circle Animation
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -551,16 +534,6 @@ export default function Screen() {
       ])
     ).start();
   }, []);
-
-  // Sound Unloading
-  useEffect(() => {
-    return sound
-      ? () => {
-          // console.log("Unloading Sound");
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
@@ -593,11 +566,8 @@ export default function Screen() {
 
         <View className="mb-4 flex items-center justify-center gap-y-36 h-2/3 relative">
           <Animated.View
+            className="w-[250px] md:w-[500px] h-[250px] md:h-[500px] border-4 md:border-[5px] rounded-full"
             style={{
-              width: 250,
-              height: 250,
-              borderRadius: 150,
-              borderWidth: 3,
               borderColor: "rgba(30, 144, 255, 0.6)",
               justifyContent: "center",
               alignItems: "center",
@@ -620,24 +590,16 @@ export default function Screen() {
             }}
           >
             <TouchableOpacity
-              className="items-center justify-center rounded-full z-10"
-              style={{ width: 250, height: 250 }}
+              className="items-center justify-center rounded-full z-10 w-[250px] md:w-[500px] h-[250px] md:h-[500px]"
               onPressIn={handleButtonPressIn}
               onPressOut={handleButtonPressOut}
             >
-              {/* Empty content for hollow appearance */}
               <Text className="text-blue-800 text-xl font-bold"></Text>
             </TouchableOpacity>
             <BlurView
               intensity={10} // Adjust blur strength
               tint="regular"
-              className="absolute w-[250px] h-[250px] rounded-full"
-              style={{
-                position: "absolute",
-                width: 300,
-                height: 300,
-                borderRadius: 125,
-              }}
+              className="absolute w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full"
             />
           </Animated.View>
           <Text className="text-xl text-center mt-8 text-gray-700 font-medium">
