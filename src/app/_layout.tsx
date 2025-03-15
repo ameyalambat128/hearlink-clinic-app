@@ -70,7 +70,12 @@ function RootLayoutNav() {
             ),
           }}
         />
-        <Stack.Screen name="(modals)/pause-modal" />
+        <Stack.Screen
+          name="(modals)/pause-modal"
+          options={{
+            presentation: "modal",
+          }}
+        />
         <Stack.Screen
           name="(modals)/report-modal"
           options={{
