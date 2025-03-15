@@ -495,10 +495,9 @@ export default function Screen() {
     );
   }, [currentFrequencyIndex, currentIntensity]);
 
-  // Timeout for no response - randomized between 4-8 seconds
   useEffect(() => {
-    // Generate a random timeout between 4000 and 8000 milliseconds (4-8 seconds)
-    const randomTimeout = Math.floor(Math.random() * (8000 - 4000 + 1)) + 4000;
+    // Generate a random timeout between 2000 and 7000 milliseconds (2-7 seconds)
+    const randomTimeout = Math.floor(Math.random() * (7000 - 2000 + 1)) + 2000;
 
     console.log(
       `Setting timeout for ${randomTimeout / 1000}s for ${currentEar} ear at ${
