@@ -331,6 +331,7 @@ export default function Screen() {
   const [currentEar, setCurrentEar] = useState<"right" | "left">("right");
   const [results, setResults] = useState({ right: {}, left: {} });
   const [progress, setProgress] = useState(new Animated.Value(0));
+  const [testFinished, setTestFinished] = useState(false);
 
   const pressAnim = useRef(new Animated.Value(1)).current;
 
@@ -415,15 +416,24 @@ export default function Screen() {
     }));
   };
 
-  const finishTest = () => {
+  const finishTest = useCallback(() => {
     setResults((currentResults) => {
       console.log("Finish Test: ", currentResults);
-      // Both ears have been tested, update the global state
+      // Update global state with the latest results
       setGTestResult(currentResults.right, currentResults.left);
       return currentResults;
     });
-    handleNext();
-  };
+
+    // Mark the test as finished instead of navigating immediately
+    setTestFinished(true);
+  }, [setGTestResult]);
+
+  // Use effect to handle navigation after state updates are complete
+  useEffect(() => {
+    if (testFinished) {
+      handleNext();
+    }
+  }, [testFinished, handleNext]);
 
   const moveToNextFrequency = () => {
     // First, save the current frequency result
@@ -485,13 +495,25 @@ export default function Screen() {
     );
   }, [currentFrequencyIndex, currentIntensity]);
 
-  // Timeout for no response
+  // Timeout for no response - randomized between 4-8 seconds
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      moveToNextFrequency();
-    }, 8000); // 8 seconds
+    // Generate a random timeout between 4000 and 8000 milliseconds (4-8 seconds)
+    const randomTimeout = Math.floor(Math.random() * (8000 - 4000 + 1)) + 4000;
 
-    return () => {};
+    console.log(
+      `Setting timeout for ${randomTimeout / 1000}s for ${currentEar} ear at ${
+        frequencies[currentFrequencyIndex]
+      } Hz`
+    );
+
+    const timeoutId = setTimeout(() => {
+      moveToNextFrequency();
+    }, randomTimeout);
+
+    // Clear timeout on cleanup
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [currentFrequencyIndex, currentIntensity, currentEar]);
 
   // Add cleanup function to handle test interruption
