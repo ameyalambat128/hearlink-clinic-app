@@ -69,18 +69,6 @@ export default function Modal() {
         }}
       />
       <ModalItem
-        name="Restart"
-        iconName="replay"
-        onPress={() => {
-          handleModalAction(() => {
-            router.push({
-              pathname: "/hearing-test/comprehensiveTest/connectAirpodsPro",
-            });
-          });
-        }}
-        group="none"
-      />
-      <ModalItem
         name="Go back home"
         iconName="home"
         onPress={() => {
