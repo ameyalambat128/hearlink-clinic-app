@@ -398,11 +398,12 @@ export default function Screen() {
   };
 
   const handleYesPress = async () => {
-    if (currentIntensity === SECOND_INTENSITY) {
+    if (currentIntensity == INITIAL_INTENSITY) {
+      setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
+      await decreaseIntensity();
+    } else if (currentIntensity === SECOND_INTENSITY) {
       setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
       moveToNextFrequency();
-    } else {
-      decreaseIntensity();
     }
   };
 
@@ -416,7 +417,7 @@ export default function Screen() {
     }));
   };
 
-  const finishTest = useCallback(() => {
+  const finishTest = () => {
     setResults((currentResults) => {
       console.log("Finish Test: ", currentResults);
       // Update global state with the latest results
@@ -426,16 +427,9 @@ export default function Screen() {
 
     // Mark the test as finished instead of navigating immediately
     setTestFinished(true);
-  }, [setGTestResult]);
+  };
 
-  // Use effect to handle navigation after state updates are complete
-  useEffect(() => {
-    if (testFinished) {
-      handleNext();
-    }
-  }, [testFinished, handleNext]);
-
-  const moveToNextFrequency = () => {
+  const moveToNextFrequency = useCallback(() => {
     // First, save the current frequency result
     setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
 
@@ -460,7 +454,13 @@ export default function Screen() {
         finishTest();
       }
     }
-  };
+  }, [
+    currentFrequencyIndex,
+    frequencies,
+    currentEar,
+    currentIntensity,
+    finishTest,
+  ]);
 
   const testPaused = () => {
     togglePause();
@@ -487,6 +487,13 @@ export default function Screen() {
     handleYesPress();
   };
 
+  // Use effect to handle navigation after state updates are complete
+  useEffect(() => {
+    if (testFinished) {
+      handleNext();
+    }
+  }, [testFinished, handleNext]);
+
   // Test phase sound loading
   useEffect(() => {
     loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
@@ -496,8 +503,8 @@ export default function Screen() {
   }, [currentFrequencyIndex, currentIntensity]);
 
   useEffect(() => {
-    // Generate a random timeout between 2000 and 7000 milliseconds (2-7 seconds)
-    const randomTimeout = Math.floor(Math.random() * (7000 - 2000 + 1)) + 2000;
+    // Generate a random timeout between 4000 and 7000 milliseconds (4-7 seconds)
+    const randomTimeout = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
     console.log(
       `Setting timeout for ${randomTimeout / 1000}s for ${currentEar} ear at ${
@@ -513,7 +520,7 @@ export default function Screen() {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [currentFrequencyIndex, currentIntensity, currentEar]);
+  }, [currentFrequencyIndex, currentEar]);
 
   // Add cleanup function to handle test interruption
 
