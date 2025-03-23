@@ -324,6 +324,8 @@ export default function Screen() {
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPressed, setIsPressed] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
+  const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const [status, setStatus] = useState<AVPlaybackStatus>();
   const [currentFrequencyIndex, setCurrentFrequencyIndex] = useState<number>(0);
   const [currentIntensity, setCurrentIntensity] =
@@ -335,9 +337,9 @@ export default function Screen() {
 
   const pressAnim = useRef(new Animated.Value(1)).current;
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     router.push("/hearing-test/comprehensiveTest/hearingScreeningResults");
-  };
+  }, [router]);
 
   const playSound = useCallback(async (soundToPlay: Audio.Sound) => {
     try {
@@ -397,13 +399,25 @@ export default function Screen() {
     setCurrentIntensity(newIntensity);
   };
 
+  // Then modify the handleYesPress function
   const handleYesPress = async () => {
+    // Prevent multiple rapid executions
+    if (isProcessingResponse) return;
+
+    setIsProcessingResponse(true);
+
     if (currentIntensity === SECOND_INTENSITY) {
       setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
       moveToNextFrequency();
     } else {
+      setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
       decreaseIntensity();
     }
+
+    // Reset after a small delay
+    setTimeout(() => {
+      setIsProcessingResponse(false);
+    }, 300); // 300ms debounce
   };
 
   const setTestResult = (frequency: number, intensity: number) => {
@@ -416,34 +430,48 @@ export default function Screen() {
     }));
   };
 
+  // Modify the finishTest function to prevent multiple calls
   const finishTest = useCallback(() => {
+    // Prevent multiple calls to finish test
+    if (isFinishing) return;
+    setIsFinishing(true);
+
+    console.log("Starting test completion process...");
+
     setResults((currentResults) => {
       console.log("Finish Test: ", currentResults);
       // Update global state with the latest results
-      setGTestResult(currentResults.right, currentResults.left);
+      setGTestResult(currentResults.left, currentResults.right);
       return currentResults;
     });
 
-    // Mark the test as finished instead of navigating immediately
+    // Mark the test as finished
     setTestFinished(true);
-  }, [setGTestResult]);
+  }, [setGTestResult, isFinishing]);
 
   // Use effect to handle navigation after state updates are complete
   useEffect(() => {
     if (testFinished) {
+      console.log("Test finished, navigating to results...");
       handleNext();
     }
   }, [testFinished, handleNext]);
 
   const moveToNextFrequency = () => {
-    // First, save the current frequency result
-    setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
-
+    // Don't proceed if test is already finishing
+    if (isFinishing) return;
+    if (currentIntensity === INITIAL_INTENSITY) {
+      setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
+    }
     // Check if we're at the last frequency in the array
     if (currentFrequencyIndex < frequencies.length - 1) {
       // Move to next frequency in the same ear
-      setCurrentFrequencyIndex((prevIndex) => prevIndex + 1);
-      setCurrentIntensity(INITIAL_INTENSITY);
+      setCurrentFrequencyIndex((prevIndex) => {
+        // Update intensity in the same batch
+        setCurrentIntensity(INITIAL_INTENSITY);
+        // Return the new frequency index
+        return prevIndex + 1;
+      });
     } else {
       // We've reached the end of frequencies for current ear
       if (currentEar === "right") {
@@ -496,24 +524,30 @@ export default function Screen() {
   }, [currentFrequencyIndex, currentIntensity]);
 
   useEffect(() => {
+    // Don't set a new timeout if test is finishing
+    if (isFinishing) return;
+
     // Generate a random timeout between 2000 and 7000 milliseconds (2-7 seconds)
     const randomTimeout = Math.floor(Math.random() * (7000 - 2000 + 1)) + 2000;
 
     console.log(
       `Setting timeout for ${randomTimeout / 1000}s for ${currentEar} ear at ${
         frequencies[currentFrequencyIndex]
-      } Hz`
+      } Hz at ${currentIntensity} dB`
     );
 
     const timeoutId = setTimeout(() => {
-      moveToNextFrequency();
+      // Double-check we're not already finishing before moving to next frequency
+      if (!isFinishing) {
+        moveToNextFrequency();
+      }
     }, randomTimeout);
 
     // Clear timeout on cleanup
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [currentFrequencyIndex, currentIntensity, currentEar]);
+  }, [currentFrequencyIndex, currentIntensity, currentEar, isFinishing]);
 
   // Add cleanup function to handle test interruption
 
