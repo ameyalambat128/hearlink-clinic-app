@@ -517,18 +517,27 @@ export default function Screen() {
 
   // Test phase sound loading
   useEffect(() => {
-    loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
-    console.log(
-      `Test phase has begun for ${currentEar}: ${frequencies[currentFrequencyIndex]} Hz`
-    );
+    // Generate a random timeout between 4000 and 7000 milliseconds (4-7 seconds)
+    const randomTimeout = Math.floor(Math.random() * (4000 - 2000 + 1)) + 2000;
+
+    const timeoutId = setTimeout(() => {
+      loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
+      console.log(
+        `Test phase has begun for ${currentEar}: ${frequencies[currentFrequencyIndex]} Hz`
+      );
+    }, randomTimeout);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [currentFrequencyIndex, currentIntensity]);
 
   useEffect(() => {
     // Don't set a new timeout if test is finishing
     if (isFinishing) return;
 
-    // Generate a random timeout between 2000 and 7000 milliseconds (2-7 seconds)
-    const randomTimeout = Math.floor(Math.random() * (7000 - 2000 + 1)) + 2000;
+    // Generate a random timeout between 4000 and 7000 milliseconds (4-7 seconds)
+    const randomTimeout = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
 
     console.log(
       `Setting timeout for ${randomTimeout / 1000}s for ${currentEar} ear at ${
