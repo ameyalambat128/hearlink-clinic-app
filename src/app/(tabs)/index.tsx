@@ -81,7 +81,7 @@ export default function Hearing() {
     >
       <View className="">
         <Image
-          source={require("../../../assets/images/hearlinkhome-logo.png")}
+          source={require("../../../assets/images/hearlink-logo.png")}
           resizeMode="contain"
           style={{
             width: 180,
