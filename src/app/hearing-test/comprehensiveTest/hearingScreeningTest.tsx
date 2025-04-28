@@ -1,5 +1,7 @@
 import { AVPlaybackStatus, Audio, InterruptionModeIOS } from "expo-av";
 import { Stack, useRouter } from "expo-router";
+// Add this import for haptic feedback
+import * as Haptics from "expo-haptics";
 import {
   useCallback,
   useEffect,
@@ -496,6 +498,9 @@ export default function Screen() {
   };
 
   const handleButtonPressIn = () => {
+    // Add haptic feedback on button press
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     setIsPressed(true);
     Animated.timing(pressAnim, {
       toValue: 0.97,
@@ -505,6 +510,9 @@ export default function Screen() {
   };
 
   const handleButtonPressOut = () => {
+    // Add haptic feedback on button release
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     setIsPressed(false);
     Animated.timing(pressAnim, {
       toValue: 1,
