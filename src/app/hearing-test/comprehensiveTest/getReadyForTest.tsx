@@ -18,8 +18,8 @@ export default function Screen() {
             Hearing Screening Test
           </Text>
           <Text className="text-xl md:text-2xl text-center font-medium">
-            Whenever you hear a tone, no matter how faint, please tap the
-            circle.
+            When you hear a beep, tap the circle below. If you don't hear a
+            beep, do nothing. Press "Begin Testing" to start.
           </Text>
           <Text className="text-xl md:text-2xl text-center font-medium">
             The test will begin after you press the button below.
