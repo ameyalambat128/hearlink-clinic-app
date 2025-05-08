@@ -43,6 +43,19 @@ export default function Screen() {
     return allFrequenciesPass ? "Pass" : "Refer";
   }, [rightEarResults, leftEarResults]);
 
+  // Determine individual ear results
+  const rightEarResult = useMemo(() => {
+    return Object.values(rightEarResults).every((value) => value === 25)
+      ? "Pass"
+      : "Refer";
+  }, [rightEarResults]);
+
+  const leftEarResult = useMemo(() => {
+    return Object.values(leftEarResults).every((value) => value === 25)
+      ? "Pass"
+      : "Refer";
+  }, [leftEarResults]);
+
   const generateReport = async () => {
     setLoading(true);
 
@@ -113,119 +126,58 @@ export default function Screen() {
             Hearing Screening Results
           </Text>
 
-          {/* Result Card */}
-          <View
-            className={`mt-8 w-full rounded-2xl p-6 ${
-              screeningResult === "Pass" ? "bg-blue-50" : "bg-orange-50"
-            }`}
-          >
-            <View className="flex-row items-center justify-center mb-4">
+          {/* Right Ear Results */}
+          <View className="w-full bg-gray-50 rounded-xl p-6 mt-8">
+            <Text className="text-xl font-bold mb-4 text-center">
+              Right Ear
+            </Text>
+            <View className="flex-row items-center justify-center">
               <Ionicons
                 name={
-                  screeningResult === "Pass"
+                  rightEarResult === "Pass"
                     ? "checkmark-circle"
                     : "alert-circle"
                 }
                 size={30}
-                color={screeningResult === "Pass" ? "#16a34a" : "#ea580c"}
+                color={rightEarResult === "Pass" ? "#16a34a" : "#ea580c"}
               />
               <Text
                 className={`ml-2 text-2xl font-bold ${
-                  screeningResult === "Pass"
+                  rightEarResult === "Pass"
                     ? "text-green-600"
                     : "text-orange-600"
                 }`}
               >
-                {screeningResult === "Pass" ? "Pass" : "Refer"}
+                {rightEarResult}
               </Text>
             </View>
-
-            <Text className="text-gray-700 text-lg text-center">
-              {screeningResult === "Pass"
-                ? "Your hearing screening results indicate that your hearing is within normal limits at all tested frequencies. No further action is needed at this time."
-                : "Your hearing screening results indicate potential hearing difficulties. We recommend scheduling a comprehensive hearing evaluation with a hearing specialist."}
-            </Text>
-          </View>
-
-          {/* Detailed Results Section */}
-          <Text className="mt-10 mb-4 text-2xl font-bold text-center">
-            Detailed Results
-          </Text>
-
-          {/* Right Ear Results */}
-          <View className="w-full bg-gray-50 rounded-xl p-4 mb-4">
-            <Text className="text-xl font-bold mb-3 text-center">
-              Right Ear
-            </Text>
-            {Object.keys(rightEarResults).map((frequency) => (
-              <View
-                key={`right-${frequency}`}
-                className="flex-row justify-between items-center py-2 border-b border-gray-200"
-              >
-                <Text className="text-lg">{frequency} Hz</Text>
-                <View className="flex-row items-center">
-                  <Ionicons
-                    name={
-                      rightEarResults[frequency] === 25
-                        ? "checkmark-circle"
-                        : "close-circle"
-                    }
-                    size={20}
-                    color={
-                      rightEarResults[frequency] === 25 ? "#16a34a" : "#dc2626"
-                    }
-                  />
-                  <Text
-                    className={`ml-2 font-medium ${
-                      rightEarResults[frequency] === 25
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {rightEarResults[frequency] === 25 ? "Pass" : "Refer"}
-                  </Text>
-                </View>
-              </View>
-            ))}
           </View>
 
           {/* Left Ear Results */}
-          <View className="w-full bg-gray-50 rounded-xl p-4">
-            <Text className="text-xl font-bold mb-3 text-center">Left Ear</Text>
-            {Object.keys(leftEarResults).map((frequency) => (
-              <View
-                key={`left-${frequency}`}
-                className="flex-row justify-between items-center py-2 border-b border-gray-200"
+          <View className="w-full bg-gray-50 rounded-xl p-6 mt-4">
+            <Text className="text-xl font-bold mb-4 text-center">Left Ear</Text>
+            <View className="flex-row items-center justify-center">
+              <Ionicons
+                name={
+                  leftEarResult === "Pass" ? "checkmark-circle" : "alert-circle"
+                }
+                size={30}
+                color={leftEarResult === "Pass" ? "#16a34a" : "#ea580c"}
+              />
+              <Text
+                className={`ml-2 text-2xl font-bold ${
+                  leftEarResult === "Pass"
+                    ? "text-green-600"
+                    : "text-orange-600"
+                }`}
               >
-                <Text className="text-lg">{frequency} Hz</Text>
-                <View className="flex-row items-center">
-                  <Ionicons
-                    name={
-                      leftEarResults[frequency] === 25
-                        ? "checkmark-circle"
-                        : "close-circle"
-                    }
-                    size={20}
-                    color={
-                      leftEarResults[frequency] === 25 ? "#16a34a" : "#dc2626"
-                    }
-                  />
-                  <Text
-                    className={`ml-2 font-medium ${
-                      leftEarResults[frequency] === 25
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {leftEarResults[frequency] === 25 ? "Pass" : "Refer"}
-                  </Text>
-                </View>
-              </View>
-            ))}
+                {leftEarResult}
+              </Text>
+            </View>
           </View>
 
           {/* Action Buttons */}
-          <View className="w-full mt-10 flex-row justify-between">
+          <View className="w-full mt-10">
             <TouchableOpacity
               onPress={() =>
                 pdfPath &&
