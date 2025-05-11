@@ -101,3 +101,19 @@ export const extractKeywords = (trackId: string, sentenceId: number) => {
   const trackIndex = parseInt(trackId) - 3;
   return keywordList[trackIndex][String(sentenceId)];
 };
+
+export const getKeywordsForTrack = (trackId: string) => {
+  const keywords = [];
+  for (let i = 1; i <= 6; i++) {
+    keywords.push(...extractKeywords(trackId, i));
+  }
+  return keywords;
+};
+
+export const chunkArray = (arr: string[], chunkSize: number) => {
+  const result = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    result.push(arr.slice(i, i + chunkSize));
+  }
+  return result;
+};

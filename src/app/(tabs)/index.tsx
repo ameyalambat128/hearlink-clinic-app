@@ -19,7 +19,7 @@ import { useUserStore } from "@/store/store";
 const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 const { width, height } = Dimensions.get("window");
 const ITEM_WIDTH = width * (isPad ? 0.65 : 0.8);
-const ITEM_HEIGHT = ITEM_WIDTH * 1.5;
+const ITEM_HEIGHT = ITEM_WIDTH * 1.2;
 const SPACING = 10;
 const SPACER_ITEM_SIZE = (width - ITEM_WIDTH) / 2;
 
@@ -42,8 +42,7 @@ const tests: {
   {
     id: "1",
     name: "Hearing Screening Test",
-    description:
-      "Easily screen your hearing with key tones at different frequencies and assess your ability to hear speech in noise using the QuickSIN test. Get instant results to help determine if you need a more detailed hearing test.",
+    description: "Assess your hearing ability",
     link: "/hearing-test/comprehensiveTest/",
     image: require("../../../assets/images/hearingscreen-logo.png"),
   },
@@ -82,7 +81,7 @@ export default function Hearing() {
     >
       <View className="">
         <Image
-          source={require("../../../assets/images/hearlinkhome-logo.png")}
+          source={require("../../../assets/images/hearlink-logo.png")}
           resizeMode="contain"
           style={{
             width: 180,

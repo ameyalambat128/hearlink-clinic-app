@@ -41,11 +41,15 @@ type UserState = {
   testConducted: string;
   leftEarResults: Record<number, number>;
   rightEarResults: Record<number, number>;
+  questionOne: boolean;
+  questionTwo: boolean;
   setName: (name: string) => void;
   setDateOfBirth: (dateOfBirth: string) => void;
   setDateOfTest: (dateOfTest: string) => void;
   setSnrLoss: (snrLoss: string) => void;
   setTestConducted: (testConducted: string) => void;
+  setQuestionOne: (value: boolean) => void;
+  setQuestionTwo: (value: boolean) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -56,11 +60,15 @@ export const useUserStore = create<UserState>((set) => ({
   testConducted: "",
   leftEarResults: {},
   rightEarResults: {},
+  questionOne: false,
+  questionTwo: false,
   setName: (name: string) => set({ name }),
   setDateOfBirth: (dateOfBirth: string) => set({ dateOfBirth }),
   setDateOfTest: (dateOfTest: string) => set({ dateOfTest }),
   setSnrLoss: (snrLoss: string) => set({ snrLoss }),
   setTestConducted: (testConducted: string) => set({ testConducted }),
+  setQuestionOne: (value: boolean) => set({ questionOne: value }),
+  setQuestionTwo: (value: boolean) => set({ questionTwo: value }),
 }));
 
 // Reports Store

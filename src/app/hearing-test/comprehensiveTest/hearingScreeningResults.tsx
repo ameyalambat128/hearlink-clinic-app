@@ -1,17 +1,17 @@
 import { Foundation, Ionicons } from "@expo/vector-icons";
 import {
-  FlatList,
   SafeAreaView,
   View,
   Text,
   TouchableOpacity,
-  Modal,
+  ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 import uuid from "react-native-uuid";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import {
   useHearingScreeningResultsStore,
@@ -32,9 +32,29 @@ export default function Screen() {
   const { addReport } = useReportsStore();
 
   const [loading, setLoading] = useState(false);
-
   const [pdfPath, setPdfPath] = useState<string | null>(null);
-  const [showPdf, setShowPdf] = useState(false);
+
+  // Determine overall result - Pass only if ALL frequencies pass in BOTH ears
+  const screeningResult = useMemo(() => {
+    const allFrequenciesPass = Object.values({
+      ...rightEarResults,
+      ...leftEarResults,
+    }).every((value) => value === 25);
+    return allFrequenciesPass ? "Pass" : "Refer";
+  }, [rightEarResults, leftEarResults]);
+
+  // Determine individual ear results
+  const rightEarResult = useMemo(() => {
+    return Object.values(rightEarResults).every((value) => value === 25)
+      ? "Pass"
+      : "Refer";
+  }, [rightEarResults]);
+
+  const leftEarResult = useMemo(() => {
+    return Object.values(leftEarResults).every((value) => value === 25)
+      ? "Pass"
+      : "Refer";
+  }, [leftEarResults]);
 
   const generateReport = async () => {
     setLoading(true);
@@ -94,144 +114,96 @@ export default function Screen() {
     }
   };
 
-  const calculate = (score: number) => {
-    if (score == 25) {
-      return "Pass";
-    } else {
-      return "Fail";
-    }
-  };
-
   useEffect(() => {
     generateReport();
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 items-center gap-y-4 justify-start">
-      <View className="mt-20 md:mt-40 w-4/5 rounded-3xl bg-blue-200 p-6 shadow-xl dark:bg-black">
-        <View className="mb-6 self-center p-2">
-          <Foundation
-            name="results"
-            size={30}
-            style={{ color: "rgb(30 64 175)" }}
-          />
-        </View>
-        <View className="flex items-center">
-          <Text className="mb-6 text-center text-2xl md:text-4xl font-bold">
-            Results
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        <View className="items-center px-4 pt-10">
+          <Text className="mt-4 text-3xl font-bold text-center">
+            Hearing Screening Results
           </Text>
-          <Text className="mb-4 text-center text-2xl md:text-4xl font-bold">
-            Right Ear
-          </Text>
-          <FlatList
-            data={Object.keys(rightEarResults)}
-            className=""
-            keyExtractor={(item) => item}
-            renderItem={({ item }: { item: any }) => (
-              <View className="flex-row items-center">
-                <Text className="text-2xl font-bold">{item} Hz</Text>
-                <Text className="mx-4 text-2xl font-bold">-</Text>
-                <Text
-                  className={`text-2xl font-bold ${
-                    calculate(rightEarResults[item]) === "Pass"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                >
-                  {calculate(rightEarResults[item]) === "Pass" ? (
-                    <Ionicons
-                      name="checkmark-outline"
-                      size={24}
-                      color="green"
-                    />
-                  ) : (
-                    <Ionicons name="close-outline" size={24} color="red" />
-                  )}
-                  {calculate(rightEarResults[item])}
-                </Text>
-              </View>
-            )}
-          />
-          <Text className="my-4 text-center text-2xl md:text-4xl font-bold">
-            Left Ear
-          </Text>
-          <FlatList
-            data={Object.keys(leftEarResults)}
-            className=""
-            keyExtractor={(item) => item}
-            renderItem={({ item }: { item: any }) => (
-              <View className="flex-row items-center">
-                <Text className="text-2xl font-bold">{item} Hz</Text>
-                <Text className="mx-4 text-2xl font-bold">-</Text>
-                <Text
-                  className={`text-2xl font-bold ${
-                    calculate(leftEarResults[item]) === "Pass"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                >
-                  {calculate(leftEarResults[item]) === "Pass" ? (
-                    <Ionicons
-                      name="checkmark-outline"
-                      size={24}
-                      color="green"
-                    />
-                  ) : (
-                    <Ionicons name="close-outline" size={24} color="red" />
-                  )}
-                  {calculate(leftEarResults[item])}
-                </Text>
-              </View>
-            )}
-          />
-        </View>
-      </View>
-      <TouchableOpacity
-        onPress={() =>
-          //@ts-ignore
-          router.push(`/(modals)/report-modal?pdfPath=${pdfPath}`)
-        }
-        disabled={loading || !pdfPath}
-        className={`py-3 px-6 rounded-xl ${
-          loading || !pdfPath ? "bg-gray-400" : "bg-blue-500"
-        }`}
-      >
-        <Text className="text-white text-center font-semibold">
-          {loading ? "Generating Report..." : "Open Report"}
-        </Text>
-      </TouchableOpacity>
 
-      {/* <Modal
-        visible={showPdf}
-        presentationStyle="fullScreen"
-        animationType="slide"
-        onRequestClose={() => setShowPdf(false)}
-      >
-        <View className="flex-1 justify-center items-center gap-3 bg-white dark:bg-gray-900">
-          <TouchableOpacity
-            onPress={() => setShowPdf(false)}
-            className="bg-red-500 py-2 px-4 rounded mt-4"
-          >
-            <Text className="text-white text-center font-semibold">Close</Text>
-          </TouchableOpacity>
-          <Pdf
-            source={{ uri: pdfPath, cache: true }}
-            style={{ flex: 1, alignSelf: "stretch" }}
-            onLoadComplete={(numberOfPages, filePath) => {
-              console.log(`number of pages: ${numberOfPages}`);
-            }}
-            onPageChanged={(page, numberOfPages) => {
-              console.log(`current page: ${page}`);
-            }}
-            onError={(error) => {
-              console.error(error);
-            }}
-            onPressLink={(uri) => {
-              console.log(`Link pressed: ${uri}`);
-            }}
-          />
+          {/* Right Ear Results */}
+          <View className="w-full bg-gray-50 rounded-xl p-6 mt-8">
+            <Text className="text-xl font-bold mb-4 text-center">
+              Right Ear
+            </Text>
+            <View className="flex-row items-center justify-center">
+              <Ionicons
+                name={
+                  rightEarResult === "Pass"
+                    ? "checkmark-circle"
+                    : "alert-circle"
+                }
+                size={30}
+                color={rightEarResult === "Pass" ? "#16a34a" : "#ea580c"}
+              />
+              <Text
+                className={`ml-2 text-2xl font-bold ${
+                  rightEarResult === "Pass"
+                    ? "text-green-600"
+                    : "text-orange-600"
+                }`}
+              >
+                {rightEarResult}
+              </Text>
+            </View>
+          </View>
+
+          {/* Left Ear Results */}
+          <View className="w-full bg-gray-50 rounded-xl p-6 mt-4">
+            <Text className="text-xl font-bold mb-4 text-center">Left Ear</Text>
+            <View className="flex-row items-center justify-center">
+              <Ionicons
+                name={
+                  leftEarResult === "Pass" ? "checkmark-circle" : "alert-circle"
+                }
+                size={30}
+                color={leftEarResult === "Pass" ? "#16a34a" : "#ea580c"}
+              />
+              <Text
+                className={`ml-2 text-2xl font-bold ${
+                  leftEarResult === "Pass"
+                    ? "text-green-600"
+                    : "text-orange-600"
+                }`}
+              >
+                {leftEarResult}
+              </Text>
+            </View>
+          </View>
+
+          {/* Action Buttons */}
+          <View className="w-full mt-10">
+            <TouchableOpacity
+              onPress={() =>
+                pdfPath &&
+                //@ts-expect-error - router.push is not typed
+                router.push(`/(modals)/report-modal?pdfPath=${pdfPath}`)
+              }
+              disabled={loading || !pdfPath}
+              className={`w-full items-center justify-center rounded-2xl px-6 py-4 md:py-6 ${
+                loading || !pdfPath ? "bg-gray-200" : "bg-blue-200"
+              }`}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text
+                  className={`text-base font-medium md:text-2xl ${
+                    loading ? "text-gray-800" : "text-blue-800"
+                  }`}
+                >
+                  View Report
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
-      </Modal> */}
+      </ScrollView>
     </SafeAreaView>
   );
 }

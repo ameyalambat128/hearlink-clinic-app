@@ -13,6 +13,7 @@ import * as FileSystem from "expo-file-system";
 
 import Page from "@/components/Page";
 import { useReportsStore } from "@/store/store";
+import { useRouter } from "expo-router";
 
 type SettingsItemProps = {
   name: string;
@@ -46,6 +47,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 };
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { reports } = useReportsStore();
 
   const [isAppleHealthEnabled, setIsAppleHealthEnabled] = useState(false);
@@ -64,7 +66,10 @@ export default function ProfileScreen() {
         <SettingsItem
           key={report.id}
           name={report.name}
-          onPress={() => handleOpenReport(report.filePath)}
+          onPress={() =>
+            //@ts-ignore
+            router.push(`/(modals)/report-modal?pdfPath=${report.filePath}`)
+          }
           group="none"
         />
       ))}

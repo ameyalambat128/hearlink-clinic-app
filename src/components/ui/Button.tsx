@@ -17,6 +17,7 @@ function SetUpButton({
       } text-gray-400`}
       onPress={handlePress}
       disabled={disabled}
+      {...props}
     >
       <Text
         className={`text-base font-medium md:text-2xl ${

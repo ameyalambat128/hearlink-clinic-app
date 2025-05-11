@@ -10,7 +10,7 @@ export default function Screen() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/quickSinTest");
+    router.push("/hearing-test/comprehensiveTest/getReadyForTest");
   };
 
   return (

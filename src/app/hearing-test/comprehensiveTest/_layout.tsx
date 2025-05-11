@@ -104,6 +104,21 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
+        name="volumeAdjustScreening"
+        options={{
+          title: "Get Set Up",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={30}
+                color={Colors[colorScheme ?? "light"].text}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
         name="doNotDisturb"
         options={{
           title: "Get Set Up",
@@ -134,9 +149,9 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
-        name="quickSinTest"
+        name="getReadyForTest"
         options={{
-          title: "Test",
+          title: "Get Ready",
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
               <Ionicons
@@ -149,9 +164,9 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
-        name="volumeAdjustScreening"
+        name="quickSinTest"
         options={{
-          title: "Get Set Up",
+          title: "Test",
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
               <Ionicons

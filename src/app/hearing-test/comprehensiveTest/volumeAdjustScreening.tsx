@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Text, Image, SafeAreaView, View, Platform } from "react-native";
 
 import { SetUpButton } from "@/components/ui/Button";
+import { Video, ResizeMode } from "expo-av";
 
 const isPad: boolean = Platform.OS === "ios" && Platform.isPad;
 
@@ -11,7 +12,7 @@ export default function Screen() {
   const [volume, setVolume] = useState(0);
 
   const handleNext = () => {
-    router.push("/hearing-test/comprehensiveTest/hearingScreeningTest");
+    router.push("/hearing-test/comprehensiveTest/doNotDisturb");
   };
 
   return (
@@ -28,13 +29,17 @@ export default function Screen() {
           </Text>
         </View>
         <View className="flex items-center shadow-2xl">
-          <Image
-            source={require("../../../../assets/media/volumeAdjustQ.gif")} // Replace with your volume icon
-            resizeMode="contain"
+          <Video
+            source={require("../../../../assets/media/volume-adjust.mp4")}
             style={{
-              width: 300 * (isPad ? 2 : 1),
-              height: 300 * (isPad ? 2 : 1),
+              height: 480 * (isPad ? 1.6 : 1),
+              width: isPad ? "80%" : "100%",
+              borderRadius: 10,
             }}
+            isLooping={true}
+            shouldPlay={true}
+            isMuted={true}
+            resizeMode={ResizeMode.COVER}
           />
         </View>
         <View className="mb-4 flex items-center">

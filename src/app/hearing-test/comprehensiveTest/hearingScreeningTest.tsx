@@ -1,5 +1,7 @@
 import { AVPlaybackStatus, Audio, InterruptionModeIOS } from "expo-av";
 import { Stack, useRouter } from "expo-router";
+// Add this import for haptic feedback
+import * as Haptics from "expo-haptics";
 import {
   useCallback,
   useEffect,
@@ -7,13 +9,20 @@ import {
   useRef,
   useState,
 } from "react";
-import { SafeAreaView, TouchableOpacity, View, Text } from "react-native";
+import {
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+  Text,
+  Animated,
+} from "react-native";
+import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 
 import { usePauseStore, useHearingScreeningResultsStore } from "@/store/store";
 import Colors from "@/constants/Colors";
 
-const frequencies: number[] = [1000, 2000, 4000, 500];
+const frequencies: number[] = [1000, 2000, 4000, 8000, 500];
 const INITIAL_INTENSITY: number = 35;
 const SECOND_INTENSITY: number = 25;
 const TEST_INTENSITY_STEP_UP: number = 5;
@@ -316,17 +325,23 @@ export default function Screen() {
   );
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isPressed, setIsPressed] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
+  const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const [status, setStatus] = useState<AVPlaybackStatus>();
   const [currentFrequencyIndex, setCurrentFrequencyIndex] = useState<number>(0);
   const [currentIntensity, setCurrentIntensity] =
     useState<number>(INITIAL_INTENSITY);
   const [currentEar, setCurrentEar] = useState<"right" | "left">("right");
-  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
   const [results, setResults] = useState({ right: {}, left: {} });
+  const [progress, setProgress] = useState(new Animated.Value(0));
+  const [testFinished, setTestFinished] = useState(false);
 
-  const handleNext = () => {
+  const pressAnim = useRef(new Animated.Value(1)).current;
+
+  const handleNext = useCallback(() => {
     router.push("/hearing-test/comprehensiveTest/hearingScreeningResults");
-  };
+  }, [router]);
 
   const playSound = useCallback(async (soundToPlay: Audio.Sound) => {
     try {
@@ -386,17 +401,25 @@ export default function Screen() {
     setCurrentIntensity(newIntensity);
   };
 
+  // Then modify the handleYesPress function
   const handleYesPress = async () => {
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-      timeoutIdRef.current = null;
-    }
+    // Prevent multiple rapid executions
+    if (isProcessingResponse) return;
+
+    setIsProcessingResponse(true);
+
     if (currentIntensity === SECOND_INTENSITY) {
       setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
       moveToNextFrequency();
     } else {
+      setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
       decreaseIntensity();
     }
+
+    // Reset after a small delay
+    setTimeout(() => {
+      setIsProcessingResponse(false);
+    }, 300); // 300ms debounce
   };
 
   const setTestResult = (frequency: number, intensity: number) => {
@@ -409,35 +432,61 @@ export default function Screen() {
     }));
   };
 
-  const finishTest = () => {
+  // Modify the finishTest function to prevent multiple calls
+  const finishTest = useCallback(() => {
+    // Prevent multiple calls to finish test
+    if (isFinishing) return;
+    setIsFinishing(true);
+
+    console.log("Starting test completion process...");
+
     setResults((currentResults) => {
       console.log("Finish Test: ", currentResults);
-      // Both ears have been tested, update the global state
-      setGTestResult(currentResults.right, currentResults.left);
+      // Update global state with the latest results
+      setGTestResult(currentResults.left, currentResults.right);
       return currentResults;
     });
-    handleNext();
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-      timeoutIdRef.current = null;
+
+    // Mark the test as finished
+    setTestFinished(true);
+  }, [setGTestResult, isFinishing]);
+
+  // Use effect to handle navigation after state updates are complete
+  useEffect(() => {
+    if (testFinished) {
+      console.log("Test finished, navigating to results...");
+      handleNext();
     }
-  };
+  }, [testFinished, handleNext]);
 
   const moveToNextFrequency = () => {
-    if (currentFrequencyIndex < frequencies.length - 1) {
+    // Don't proceed if test is already finishing
+    if (isFinishing) return;
+    if (currentIntensity === INITIAL_INTENSITY) {
       setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
-      setCurrentFrequencyIndex((prevIndex) => prevIndex + 1);
-      setCurrentIntensity(INITIAL_INTENSITY);
-    } else {
-      if (currentEar === "right") {
-        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
-        setCurrentFrequencyIndex(0);
-        setCurrentEar("left");
-        console.log(currentFrequencyIndex);
+    }
+    // Check if we're at the last frequency in the array
+    if (currentFrequencyIndex < frequencies.length - 1) {
+      // Move to next frequency in the same ear
+      setCurrentFrequencyIndex((prevIndex) => {
+        // Update intensity in the same batch
         setCurrentIntensity(INITIAL_INTENSITY);
+        // Return the new frequency index
+        return prevIndex + 1;
+      });
+    } else {
+      // We've reached the end of frequencies for current ear
+      if (currentEar === "right") {
+        // Switch to left ear and reset to first frequency
+        setCurrentEar("left");
+        setCurrentFrequencyIndex(0);
+        setCurrentIntensity(INITIAL_INTENSITY);
+        console.log(
+          "Switching to left ear, starting with frequency:",
+          frequencies[0]
+        );
       } else {
-        // Test is complete for both ears
-        setTestResult(frequencies[currentFrequencyIndex], currentIntensity);
+        // Both ears have been tested for all frequencies
         finishTest();
       }
     }
@@ -448,30 +497,78 @@ export default function Screen() {
     router.push("/(modals)/pause-modal");
   };
 
+  const handleButtonPressIn = () => {
+    // Add haptic feedback on button press
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    setIsPressed(true);
+    Animated.timing(pressAnim, {
+      toValue: 0.97,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleButtonPressOut = () => {
+    // Add haptic feedback on button release
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    setIsPressed(false);
+    Animated.timing(pressAnim, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+
+    handleYesPress();
+  };
+
   // Test phase sound loading
   useEffect(() => {
-    loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
-    console.log(
-      `Test phase has begun for ${currentEar}: ${frequencies[currentFrequencyIndex]} Hz`
-    );
-  }, [currentFrequencyIndex, currentIntensity]);
+    // Generate a random timeout between 4000 and 7000 milliseconds (4-7 seconds)
+    const randomTimeout = Math.floor(Math.random() * (4000 - 2000 + 1)) + 2000;
 
-  // Timeout for no response
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      moveToNextFrequency();
-    }, 5000); // 5 seconds
-
-    timeoutIdRef.current = timeout;
+    const timeoutId = setTimeout(() => {
+      loadAndPlaySound(frequencies[currentFrequencyIndex], currentIntensity);
+      console.log(
+        `Test phase has begun for ${currentEar}: ${frequencies[currentFrequencyIndex]} Hz`
+      );
+    }, randomTimeout);
 
     return () => {
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-      }
+      clearTimeout(timeoutId);
     };
-  }, [currentFrequencyIndex, currentIntensity, currentEar]);
+  }, [currentFrequencyIndex, currentIntensity]);
 
-  // Sound Pausing
+  useEffect(() => {
+    // Don't set a new timeout if test is finishing
+    if (isFinishing) return;
+
+    // Generate a random timeout between 4000 and 7000 milliseconds (4-7 seconds)
+    const randomTimeout = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
+
+    console.log(
+      `Setting timeout for ${randomTimeout / 1000}s for ${currentEar} ear at ${
+        frequencies[currentFrequencyIndex]
+      } Hz at ${currentIntensity} dB`
+    );
+
+    const timeoutId = setTimeout(() => {
+      // Double-check we're not already finishing before moving to next frequency
+      if (!isFinishing) {
+        moveToNextFrequency();
+      }
+    }, randomTimeout);
+
+    // Clear timeout on cleanup
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [currentFrequencyIndex, currentIntensity, currentEar, isFinishing]);
+
+  // Add cleanup function to handle test interruption
+
+  // Update your existing useEffect for isPaused
   useEffect(() => {
     if (isPaused) {
       // Pause the audio
@@ -479,8 +576,6 @@ export default function Screen() {
         sound.pauseAsync();
         console.log("Sound Paused");
       }
-    } else {
-      // Resume the audio if needed
     }
   }, [isPaused, sound]);
 
@@ -493,6 +588,24 @@ export default function Screen() {
         }
       : undefined;
   }, [sound]);
+
+  // Circle Animation
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(progress, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(progress, {
+          toValue: 0,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
@@ -518,26 +631,53 @@ export default function Screen() {
             Hearing Screening Test
           </Text>
           <Text className="text-xl md:text-2xl text-center font-medium">
-            Whenever you hear a beep, no matter how faint, please press yes.
+            Whenever you hear a tone, no matter how faint, please tap the
+            circle.
           </Text>
         </View>
 
-        <View className="flex items-center">
-          <TouchableOpacity
-            className="items-center justify-center rounded-full bg-blue-200 p-32 md:p-44 mb-8 md:aspect-square md:w-[450px]"
-            onPress={handleYesPress}
+        <View className="mb-4 flex items-center justify-center gap-y-36 h-2/3 relative">
+          <Animated.View
+            className="w-[250px] md:w-[500px] h-[250px] md:h-[500px] border-4 md:border-[5px] rounded-full"
+            style={{
+              borderColor: "rgba(30, 144, 255, 0.6)",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "transparent",
+              opacity: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.7, 1],
+              }),
+              transform: [
+                {
+                  scale: Animated.multiply(
+                    progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.1],
+                    }),
+                    pressAnim
+                  ),
+                },
+              ],
+            }}
           >
-            <Text className="text-4xl font-medium text-blue-800">Yes</Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity
-            className="items-center justify-center rounded-full bg-red-200 p-4"
-            onPress={handleNoPress}
-          >
-            <Text className="text-base font-medium text-red-800">No</Text>
-          </TouchableOpacity> */}
+            <TouchableOpacity
+              className="items-center justify-center rounded-full z-10 w-[250px] md:w-[500px] h-[250px] md:h-[500px]"
+              onPressIn={handleButtonPressIn}
+              onPressOut={handleButtonPressOut}
+            >
+              <Text className="text-blue-800 text-xl font-bold"></Text>
+            </TouchableOpacity>
+            <BlurView
+              intensity={10} // Adjust blur strength
+              tint="regular"
+              className="absolute w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full"
+            />
+          </Animated.View>
+          <Text className="text-xl text-center mt-8 text-gray-700 font-medium">
+            Tap the circle when you hear a tone
+          </Text>
         </View>
-
-        <View className="mb-4 flex items-center"></View>
       </View>
     </SafeAreaView>
   );
