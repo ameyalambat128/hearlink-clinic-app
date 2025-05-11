@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
+  Switch,
 } from "react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -20,13 +21,21 @@ import { useUserStore } from "@/store/store";
 
 export default function Screen() {
   const router = useRouter();
-  const { setName, setDateOfBirth, setDateOfTest, setTestConducted } =
-    useUserStore();
+  const {
+    setName,
+    setDateOfBirth,
+    setDateOfTest,
+    setTestConducted,
+    setQuestionOne,
+    setQuestionTwo,
+  } = useUserStore();
 
   const [localName, setLocalName] = useState("");
   const [localBirthDate, setLocalBirthDate] = useState<Date | null>(null);
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
+  const [localQuestionOne, setLocalQuestionOne] = useState(false);
+  const [localQuestionTwo, setLocalQuestionTwo] = useState(false);
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || localBirthDate;
@@ -43,6 +52,8 @@ export default function Screen() {
     );
     setDateOfTest(new Date().toISOString().split("T")[0]);
     setTestConducted("comprehensiveTest");
+    setQuestionOne(localQuestionOne);
+    setQuestionTwo(localQuestionTwo);
     router.push("/hearing-test/comprehensiveTest/noiseCheck");
   };
 
@@ -57,20 +68,21 @@ export default function Screen() {
             This information will be used to create reports for your results.
           </Text>
         </View>
-        <View className="gap-10 md:gap-20 h-72">
+        <View className="gap-10 md:gap-20 h-96 w-full items-center">
           {/* Name Input */}
-          <View className="flex-row items-center mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8">
+          <View className="flex-row items-center mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md">
             <Feather name="user" size={20} className="mr-2" />
             <TextInput
               placeholder="Enter your name"
               value={localName}
               onChangeText={setLocalName}
               autoComplete="name"
+              className="flex-1"
             />
           </View>
           {/* Birth Date Picker */}
           <TouchableOpacity
-            className="flex-row items-center mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8"
+            className="flex-row items-center mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md"
             onPress={() => {
               setIsDatePickerVisible(true);
             }}
@@ -88,6 +100,29 @@ export default function Screen() {
               <Text className="text-gray-400/70">Select Birth Date</Text>
             )}
           </TouchableOpacity>
+
+          {/* Question One Toggle */}
+          <View className="flex-row items-center justify-between mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md">
+            <Text className="text-lg">Question One</Text>
+            <Switch
+              value={localQuestionOne}
+              onValueChange={setLocalQuestionOne}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={localQuestionOne ? "#2196F3" : "#f4f3f4"}
+            />
+          </View>
+
+          {/* Question Two Toggle */}
+          <View className="flex-row items-center justify-between mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md">
+            <Text className="text-lg">Question Two</Text>
+            <Switch
+              value={localQuestionTwo}
+              onValueChange={setLocalQuestionTwo}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={localQuestionTwo ? "#2196F3" : "#f4f3f4"}
+            />
+          </View>
+
           {isDatePickerVisible && (
             <Modal
               transparent={true}
