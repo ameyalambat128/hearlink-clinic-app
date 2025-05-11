@@ -503,7 +503,7 @@ export default function Screen() {
 
     setIsPressed(true);
     Animated.timing(pressAnim, {
-      toValue: 0.97,
+      toValue: 0.95, // Slightly more pronounced scale down
       duration: 100,
       useNativeDriver: true,
     }).start();
@@ -669,7 +669,7 @@ export default function Screen() {
               <Text className="text-blue-800 text-xl font-bold"></Text>
             </TouchableOpacity>
             <BlurView
-              intensity={10} // Adjust blur strength
+              intensity={10}
               tint="regular"
               className="absolute w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full"
             />
