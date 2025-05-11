@@ -43,6 +43,12 @@ type UserState = {
   rightEarResults: Record<number, number>;
   questionOne: boolean;
   questionTwo: boolean;
+  symptoms: {
+    tinnitus: boolean;
+    dizziness: boolean;
+    auralCongestion: boolean;
+  };
+  hasHearingLoss: boolean;
   setName: (name: string) => void;
   setDateOfBirth: (dateOfBirth: string) => void;
   setDateOfTest: (dateOfTest: string) => void;
@@ -50,6 +56,12 @@ type UserState = {
   setTestConducted: (testConducted: string) => void;
   setQuestionOne: (value: boolean) => void;
   setQuestionTwo: (value: boolean) => void;
+  setSymptoms: (symptoms: {
+    tinnitus: boolean;
+    dizziness: boolean;
+    auralCongestion: boolean;
+  }) => void;
+  setHasHearingLoss: (value: boolean) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -62,6 +74,12 @@ export const useUserStore = create<UserState>((set) => ({
   rightEarResults: {},
   questionOne: false,
   questionTwo: false,
+  symptoms: {
+    tinnitus: false,
+    dizziness: false,
+    auralCongestion: false,
+  },
+  hasHearingLoss: false,
   setName: (name: string) => set({ name }),
   setDateOfBirth: (dateOfBirth: string) => set({ dateOfBirth }),
   setDateOfTest: (dateOfTest: string) => set({ dateOfTest }),
@@ -69,6 +87,8 @@ export const useUserStore = create<UserState>((set) => ({
   setTestConducted: (testConducted: string) => set({ testConducted }),
   setQuestionOne: (value: boolean) => set({ questionOne: value }),
   setQuestionTwo: (value: boolean) => set({ questionTwo: value }),
+  setSymptoms: (symptoms) => set({ symptoms }),
+  setHasHearingLoss: (value) => set({ hasHearingLoss: value }),
 }));
 
 // Reports Store

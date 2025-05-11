@@ -26,16 +26,20 @@ export default function Screen() {
     setDateOfBirth,
     setDateOfTest,
     setTestConducted,
-    setQuestionOne,
-    setQuestionTwo,
+    setSymptoms,
+    setHasHearingLoss,
   } = useUserStore();
 
   const [localName, setLocalName] = useState("");
   const [localBirthDate, setLocalBirthDate] = useState<Date | null>(null);
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
-  const [localQuestionOne, setLocalQuestionOne] = useState(false);
-  const [localQuestionTwo, setLocalQuestionTwo] = useState(false);
+  const [localSymptoms, setLocalSymptoms] = useState({
+    tinnitus: false,
+    dizziness: false,
+    auralCongestion: false,
+  });
+  const [localHasHearingLoss, setLocalHasHearingLoss] = useState(false);
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || localBirthDate;
@@ -52,75 +56,111 @@ export default function Screen() {
     );
     setDateOfTest(new Date().toISOString().split("T")[0]);
     setTestConducted("comprehensiveTest");
-    setQuestionOne(localQuestionOne);
-    setQuestionTwo(localQuestionTwo);
+    setSymptoms(localSymptoms);
+    setHasHearingLoss(localHasHearingLoss);
     router.push("/hearing-test/comprehensiveTest/noiseCheck");
   };
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
       <View className="flex h-full w-3/4 justify-between">
-        <View className="flex items-center pt-8 md:pt-10">
-          <Text className="pb-6 text-3xl md:text-4xl font-bold">
+        <View className="flex items-center pt-4 md:pt-6">
+          <Text className="pb-4 text-3xl md:text-4xl font-bold">
             Enter your details
           </Text>
           <Text className="text-xl md:text-2xl text-center font-medium">
             This information will be used to create reports for your results.
           </Text>
         </View>
-        <View className="gap-10 md:gap-20 h-96 w-full items-center">
-          {/* Name Input */}
-          <View className="flex-row items-center mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md">
-            <Feather name="user" size={20} className="mr-2" />
-            <TextInput
-              placeholder="Enter your name"
-              value={localName}
-              onChangeText={setLocalName}
-              autoComplete="name"
-              className="flex-1"
-            />
-          </View>
-          {/* Birth Date Picker */}
-          <TouchableOpacity
-            className="flex-row items-center mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md"
-            onPress={() => {
-              setIsDatePickerVisible(true);
-            }}
-          >
-            <Feather name="calendar" size={19} className="mr-2" />
-            {localBirthDate ? (
-              <Text>
-                {(localBirthDate.getMonth() + 1).toString().padStart(2, "0") +
-                  "/" +
-                  localBirthDate.getDate().toString().padStart(2, "0") +
-                  "/" +
-                  localBirthDate.getFullYear()}
-              </Text>
-            ) : (
-              <Text className="text-gray-400/70">Select Birth Date</Text>
-            )}
-          </TouchableOpacity>
 
-          {/* Question One Toggle */}
-          <View className="flex-row items-center justify-between mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md">
-            <Text className="text-lg">Question One</Text>
-            <Switch
-              value={localQuestionOne}
-              onValueChange={setLocalQuestionOne}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={localQuestionOne ? "#2196F3" : "#f4f3f4"}
-            />
+        <View className="gap-4 md:gap-10 w-full items-center">
+          {/* Personal Information Section */}
+          <View className="w-full max-w-md">
+            <Text className="text-lg font-semibold mb-2 md:mb-6">
+              Personal Information
+            </Text>
+            <View className="gap-4 md:gap-6">
+              {/* Name Input */}
+              <View className="flex-row items-center bg-gray-100 h-14 md:h-16 border border-gray-300 rounded-full px-4 md:px-8 w-full">
+                <Feather name="user" size={20} className="mr-2" />
+                <TextInput
+                  placeholder="Enter your name"
+                  value={localName}
+                  onChangeText={setLocalName}
+                  autoComplete="name"
+                  className="flex-1"
+                />
+              </View>
+
+              {/* Birth Date Picker */}
+              <TouchableOpacity
+                className="flex-row items-center bg-gray-100 h-14 md:h-16 border border-gray-300 rounded-full px-4 md:px-8 w-full"
+                onPress={() => {
+                  setIsDatePickerVisible(true);
+                }}
+              >
+                <Feather name="calendar" size={19} className="mr-2" />
+                {localBirthDate ? (
+                  <Text>
+                    {(localBirthDate.getMonth() + 1)
+                      .toString()
+                      .padStart(2, "0") +
+                      "/" +
+                      localBirthDate.getDate().toString().padStart(2, "0") +
+                      "/" +
+                      localBirthDate.getFullYear()}
+                  </Text>
+                ) : (
+                  <Text className="text-gray-400/70">Select Birth Date</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
 
-          {/* Question Two Toggle */}
-          <View className="flex-row items-center justify-between mt-2 bg-gray-100 h-16 md:h-24 border border-gray-300 rounded-full px-4 md:px-8 w-full max-w-md">
-            <Text className="text-lg">Question Two</Text>
-            <Switch
-              value={localQuestionTwo}
-              onValueChange={setLocalQuestionTwo}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={localQuestionTwo ? "#2196F3" : "#f4f3f4"}
-            />
+          {/* Symptoms Section */}
+          <View className="w-full max-w-md">
+            <Text className="text-lg font-semibold mb-2 md:mb-6">
+              Do you experience any of these symptoms?
+            </Text>
+            <View className="gap-4 md:gap-6">
+              {Object.entries(localSymptoms).map(([symptom, value]) => (
+                <View
+                  key={symptom}
+                  className="flex-row items-center justify-between bg-gray-100 h-14 md:h-16 border border-gray-300 rounded-full px-4 md:px-8 w-full"
+                >
+                  <Text className="text-base capitalize">
+                    {symptom.replace(/([A-Z])/g, " $1").trim()}
+                  </Text>
+                  <Switch
+                    value={value}
+                    onValueChange={(newValue) =>
+                      setLocalSymptoms((prev) => ({
+                        ...prev,
+                        [symptom]: newValue,
+                      }))
+                    }
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={value ? "#2196F3" : "#f4f3f4"}
+                  />
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* Hearing Loss Section */}
+          <View className="w-full max-w-md">
+            <Text className="text-lg font-semibold mb-2 md:mb-6">
+              Do you have hearing loss?
+            </Text>
+            <View className="flex-row items-center justify-between bg-gray-100 h-14 md:h-16 border border-gray-300 rounded-full px-4 md:px-8 w-full">
+              <Text className="text-base">Hearing Loss</Text>
+              <Switch
+                value={localHasHearingLoss}
+                onValueChange={setLocalHasHearingLoss}
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={localHasHearingLoss ? "#2196F3" : "#f4f3f4"}
+              />
+            </View>
           </View>
 
           {isDatePickerVisible && (
@@ -169,6 +209,7 @@ export default function Screen() {
             </Modal>
           )}
         </View>
+
         <View className="mb-4 flex items-center">
           <SetUpButton
             title="Next"
