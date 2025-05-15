@@ -27,7 +27,6 @@ export default function Screen() {
     setDateOfTest,
     setTestConducted,
     setSymptoms,
-    setHasHearingLoss,
   } = useUserStore();
 
   const [localName, setLocalName] = useState("");
@@ -37,9 +36,9 @@ export default function Screen() {
   const [localSymptoms, setLocalSymptoms] = useState({
     tinnitus: false,
     dizziness: false,
-    auralCongestion: false,
+    pressureInEar: false,
+    hearingLoss: false,
   });
-  const [localHasHearingLoss, setLocalHasHearingLoss] = useState(false);
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || localBirthDate;
@@ -57,7 +56,6 @@ export default function Screen() {
     setDateOfTest(new Date().toISOString().split("T")[0]);
     setTestConducted("comprehensiveTest");
     setSymptoms(localSymptoms);
-    setHasHearingLoss(localHasHearingLoss);
     router.push("/hearing-test/comprehensiveTest/noiseCheck");
   };
 
@@ -129,7 +127,11 @@ export default function Screen() {
                   className="flex-row items-center justify-between bg-gray-100 h-14 md:h-16 border border-gray-300 rounded-full px-4 md:px-8 w-full"
                 >
                   <Text className="text-base capitalize">
-                    {symptom.replace(/([A-Z])/g, " $1").trim()}
+                    {symptom === "pressureInEar"
+                      ? "Pressure in the ear"
+                      : symptom === "hearingLoss"
+                      ? "Hearing loss"
+                      : symptom.replace(/([A-Z])/g, " $1").trim()}
                   </Text>
                   <Switch
                     value={value}
@@ -144,22 +146,6 @@ export default function Screen() {
                   />
                 </View>
               ))}
-            </View>
-          </View>
-
-          {/* Hearing Loss Section */}
-          <View className="w-full max-w-md">
-            <Text className="text-lg font-semibold mb-2 md:mb-6">
-              Do you have hearing loss?
-            </Text>
-            <View className="flex-row items-center justify-between bg-gray-100 h-14 md:h-16 border border-gray-300 rounded-full px-4 md:px-8 w-full">
-              <Text className="text-base">Hearing Loss</Text>
-              <Switch
-                value={localHasHearingLoss}
-                onValueChange={setLocalHasHearingLoss}
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={localHasHearingLoss ? "#2196F3" : "#f4f3f4"}
-              />
             </View>
           </View>
 
@@ -209,7 +195,6 @@ export default function Screen() {
             </Modal>
           )}
         </View>
-
         <View className="mb-4 flex items-center">
           <SetUpButton
             title="Next"

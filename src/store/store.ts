@@ -46,7 +46,8 @@ type UserState = {
   symptoms: {
     tinnitus: boolean;
     dizziness: boolean;
-    auralCongestion: boolean;
+    pressureInEar: boolean;
+    hearingLoss: boolean;
   };
   hasHearingLoss: boolean;
   setName: (name: string) => void;
@@ -59,7 +60,8 @@ type UserState = {
   setSymptoms: (symptoms: {
     tinnitus: boolean;
     dizziness: boolean;
-    auralCongestion: boolean;
+    pressureInEar: boolean;
+    hearingLoss: boolean;
   }) => void;
   setHasHearingLoss: (value: boolean) => void;
 };
@@ -77,7 +79,8 @@ export const useUserStore = create<UserState>((set) => ({
   symptoms: {
     tinnitus: false,
     dizziness: false,
-    auralCongestion: false,
+    pressureInEar: false,
+    hearingLoss: false,
   },
   hasHearingLoss: false,
   setName: (name: string) => set({ name }),
