@@ -28,7 +28,7 @@ export default function Screen() {
       rightEarResults: state.rightEarResults,
     })
   );
-  const { name, dateOfBirth, dateOfTest, snrLoss } = useUserStore();
+  const { name, dateOfBirth, dateOfTest, snrLoss, symptoms } = useUserStore();
   const { addReport } = useReportsStore();
 
   const [loading, setLoading] = useState(false);
@@ -75,6 +75,12 @@ export default function Screen() {
       date_of_birth: dateOfBirth,
       hs_right_thresholds: rightEarResults,
       hs_left_thresholds: leftEarResults,
+      symptoms: {
+        tinnitus: symptoms.tinnitus,
+        dizziness: symptoms.dizziness,
+        pressure_in_ear: symptoms.pressureInEar,
+        hearing_loss: symptoms.hearingLoss,
+      },
     };
 
     try {
