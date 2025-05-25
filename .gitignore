@@ -32,6 +32,12 @@ local.properties
 *.iml
 *.hprof
 
+# Cursor
+.cursor/
+
+# VScode
+.vscode/
+
 # Expo
 .expo/
 dist/
@@ -57,8 +63,9 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# environment variables
+.env
+.env.*
 
 # typescript
 *.tsbuildinfo
