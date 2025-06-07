@@ -3,7 +3,7 @@
     "name": "Hearlink",
     "description": "Hearing Aid Reimagined",
     "slug": "hearlink",
-    "version": "0.3.10",
+    "version": "0.3.12",
     "orientation": "portrait",
     "icon": "./assets/images/hearlink-icon.png",
     "scheme": "myapp",
@@ -12,9 +12,7 @@
       "image": "./assets/images/hearlink-splash.png",
       "resizeMode": "contain"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hearlinkapp.hearlink",
