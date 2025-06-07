@@ -57,7 +57,7 @@ export default function Screen() {
             <Text className="ml-4 text-lg font-semibold">Airpods Pro 2</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex flex-row items-center rounded-xl border-2 bg-gray-200 md:p-10 ${
+            className={`flex flex-row items-center rounded-xl border-2 bg-gray-200 p-4 md:p-10 mb-8 md:mb-20 ${
               selectedHeadphones === "airpodsMax"
                 ? "border-blue-500"
                 : "border-transparent"

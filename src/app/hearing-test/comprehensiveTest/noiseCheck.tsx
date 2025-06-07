@@ -9,10 +9,15 @@ import {
   useColorScheme,
   Text,
 } from "react-native";
+import { configureReanimatedLogger } from "react-native-reanimated";
 
 import { SetUpButton } from "@/components/ui/Button";
 import AudioMeter from "@/components/AudioMeter";
 import Colors from "@/constants/Colors";
+
+configureReanimatedLogger({
+  strict: false,
+});
 
 export default function Screen() {
   const router = useRouter();
@@ -29,7 +34,7 @@ export default function Screen() {
   const handleNext = async () => {
     await stopRecording();
     recordingRef.current = null;
-    router.push("/hearing-test/comprehensiveTest/connectAirpodsPro");
+    router.push("/hearing-test/comprehensiveTest/chooseHeadphones");
   };
 
   const startRecording = async () => {
