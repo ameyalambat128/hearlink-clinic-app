@@ -16,6 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hearlinkapp.hearlink",
+      "appleTeamId": "7LQ3632TTT",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "We need access to your microphone for sound playback.",
         "NSSpeechRecognitionUsageDescription": "We need access to speech recognition to process your voice commands.",
