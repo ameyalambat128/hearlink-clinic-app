@@ -32,12 +32,6 @@ local.properties
 *.iml
 *.hprof
 
-# Cursor
-.cursor/
-
-# VScode
-.vscode/
-
 # Expo
 .expo/
 dist/
